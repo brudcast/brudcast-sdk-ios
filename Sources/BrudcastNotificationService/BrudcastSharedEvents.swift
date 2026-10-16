@@ -1,4 +1,5 @@
 import Foundation
+import CryptoKit
 
 /// A file in an App Group where a notification service extension leaves events for the app to send.
 ///
@@ -17,10 +18,11 @@ public enum BrudcastSharedEvents {
     ///   - properties: String properties.
     ///   - appGroupIdentifier: The App Group shared by the app and the extension.
     ///   - occurredAt: When it happened.
-    public static func append(type: String, messageId: String, properties: [String: String] = [:], appGroupIdentifier: String, occurredAt: Date = Date()) {
+    ///   - id: The client id the service deduplicates on.
+    public static func append(type: String, messageId: String, properties: [String: String] = [:], appGroupIdentifier: String, occurredAt: Date = Date(), id: String = UUID().uuidString.lowercased()) {
         guard let url = fileURL(appGroupIdentifier) else { return }
         let event: [String: Any] = [
-            "id": UUID().uuidString.lowercased(),
+            "id": id,
             "type": type,
             "messageId": messageId,
             "properties": properties,
@@ -50,6 +52,19 @@ public enum BrudcastSharedEvents {
             }
         }
         return drained
+    }
+
+    /// The client id of a message's `push_received` event.
+    ///
+    /// Both the extension and the app's foreground handler may record the same delivery, so the id
+    /// is derived from the message id and the service keeps one of them.
+    ///
+    /// - Parameter messageId: The Brudcast message id from the payload.
+    /// - Returns: A UUID-shaped id that is the same for every call with this message id.
+    public static func receivedEventId(messageId: String) -> String {
+        let hex = SHA256.hash(data: Data("push_received|\(messageId)".utf8)).prefix(16).map { String(format: "%02x", $0) }.joined()
+        let parts = [hex.prefix(8), hex.dropFirst(8).prefix(4), hex.dropFirst(12).prefix(4), hex.dropFirst(16).prefix(4), hex.dropFirst(20)]
+        return parts.joined(separator: "-")
     }
 
     static func fileURL(_ appGroupIdentifier: String) -> URL? {

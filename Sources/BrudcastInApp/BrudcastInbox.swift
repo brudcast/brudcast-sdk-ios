@@ -163,11 +163,11 @@ public final class BrudcastInbox {
     /// Draws an inbox entry's design with the standard renderer, for a custom inbox.
     ///
     /// - Parameter message: An entry from `list`.
-    /// - Returns: The view, or nil when the design cannot be drawn.
+    /// - Returns: The view, which keeps its renderer alive for as long as it lives, or nil when the
+    ///   design cannot be drawn.
     public func render(_ message: BrudcastInAppMessage) -> UIView? {
         guard let stored = entry(message.id), let design = stored.design else { return nil }
-        let controller = InboxScreen.detail(design: design, messageId: stored.id, inbox: self)
-        return controller.view
+        return InboxDetailContainerView(controller: InboxScreen.detail(design: design, messageId: stored.id, inbox: self))
     }
 
     func open(_ message: BrudcastInAppMessage, from navigation: UINavigationController?) {

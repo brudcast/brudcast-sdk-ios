@@ -26,7 +26,13 @@ open class BrudcastNotificationServiceExtension: UNNotificationServiceExtension 
         if let group = appGroupIdentifier, let messageId = userInfo[BrudcastPushKeys.messageId] as? String {
             var properties: [String: String] = [:]
             properties["campaignId"] = userInfo[BrudcastPushKeys.campaignId] as? String
-            BrudcastSharedEvents.append(type: "push_received", messageId: messageId, properties: properties, appGroupIdentifier: group)
+            BrudcastSharedEvents.append(
+                type: "push_received",
+                messageId: messageId,
+                properties: properties,
+                appGroupIdentifier: group,
+                id: BrudcastSharedEvents.receivedEventId(messageId: messageId)
+            )
         }
 
         guard let content = content, let imageURL = Self.imageURL(in: userInfo) else {
@@ -36,6 +42,7 @@ open class BrudcastNotificationServiceExtension: UNNotificationServiceExtension 
         task = URLSession.shared.downloadTask(with: imageURL) { [weak self] location, response, _ in
             defer { self?.deliver() }
             guard let location = location,
+                  Self.fileSize(location) <= Self.maxImageBytes,
                   let attachment = Self.attachment(from: location, url: imageURL, mimeType: response?.mimeType) else { return }
             content.attachments = [attachment]
         }
@@ -62,6 +69,13 @@ open class BrudcastNotificationServiceExtension: UNNotificationServiceExtension 
         let raw = options?["image"] as? String ?? userInfo["image"] as? String
         guard let string = raw, let url = URL(string: string), url.scheme?.lowercased() == "https" else { return nil }
         return url
+    }
+
+    /// The largest image Apple accepts as a notification attachment.
+    static let maxImageBytes = 10 * 1_024 * 1_024
+
+    static func fileSize(_ url: URL) -> Int {
+        (try? url.resourceValues(forKeys: [.fileSizeKey]).fileSize) ?? Int.max
     }
 
     static func attachment(from location: URL, url: URL, mimeType: String?) -> UNNotificationAttachment? {

@@ -117,6 +117,13 @@ final class InAppDesignTests: XCTestCase {
         XCTAssertNil(message.design)
         XCTAssertEqual(message.designState, .unsupported(.unsupportedVersion(3)))
     }
+
+    func testAnUnreadableTriggerStillYieldsAMessageThatNeverFires() throws {
+        let message = try XCTUnwrap(InAppMessage.parse(Fixtures.message(trigger: ["type": "app_open"])))
+        XCTAssertTrue(message.triggerUnreadable)
+        XCTAssertFalse(TriggerMatcher.matches(message.trigger, .session))
+        XCTAssertFalse(TriggerMatcher.matches(message.trigger, .event(name: "app_open", properties: [:])))
+    }
 }
 
 final class TriggerMatcherTests: XCTestCase {

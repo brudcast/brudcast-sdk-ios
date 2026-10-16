@@ -43,7 +43,7 @@ final class EventQueueTests: XCTestCase {
         XCTAssertNil(queue.nextBatch())
     }
 
-    func testSentAndRejectedBatchesLeaveTheQueue() {
+    func testSentDiscardedAndLoneRejectedEventsLeaveTheQueue() {
         let queue = makeQueue()
         queue.enqueue(event())
         queue.complete(queue.nextBatch()!, outcome: .sent)
@@ -52,6 +52,44 @@ final class EventQueueTests: XCTestCase {
         queue.enqueue(event())
         queue.complete(queue.nextBatch()!, outcome: .rejected)
         XCTAssertEqual(queue.waitingCount, 0)
+
+        queue.enqueue(event())
+        queue.enqueue(event())
+        queue.complete(queue.nextBatch()!, outcome: .discarded)
+        XCTAssertEqual(queue.waitingCount, 0)
+    }
+
+    func testARejectedBatchIsHalvedUntilOnlyTheBadEventIsDropped() {
+        let queue = makeQueue()
+        for _ in 0..<8 {
+            queue.enqueue(event())
+        }
+        let bad = queue.pending[5].id
+        var sent = 0
+        while let batch = queue.nextBatch() {
+            if batch.contains(where: { $0.id == bad }) {
+                queue.complete(batch, outcome: .rejected)
+            } else {
+                sent += batch.count
+                queue.complete(batch, outcome: .sent)
+            }
+        }
+        XCTAssertEqual(sent, 7)
+        XCTAssertEqual(queue.waitingCount, 0)
+    }
+
+    func testBatchesNeverMixOwners() {
+        let queue = makeQueue()
+        var first = event()
+        first.owner = "a"
+        var second = event()
+        second.owner = "b"
+        queue.enqueue(first)
+        queue.enqueue(second)
+        queue.enqueue(first)
+        let batch = queue.nextBatch()
+        XCTAssertEqual(batch?.count, 2)
+        XCTAssertTrue(batch!.allSatisfy { $0.owner == "a" })
     }
 
     func testRetryBacksOffExponentiallyUpToFiveMinutes() {
@@ -96,8 +134,10 @@ final class EventQueueTests: XCTestCase {
         let storage = BrudcastStorage(defaults: defaults, directory: directory)
 
         let queue = makeQueue(storage: storage)
-        let original = BrudcastEvent(type: "click", messageId: "m1", buttonId: "cta", properties: ["plan": "pro", "seats": 3], occurredAt: clock, channel: "in_app")
+        var original = BrudcastEvent(type: "click", messageId: "m1", buttonId: "cta", properties: ["plan": "pro", "seats": 3], occurredAt: clock, channel: "in_app")
+        original.owner = "4812"
         queue.enqueue(original)
+        queue.persistIfNeeded()
 
         let restored = makeQueue(storage: storage)
         XCTAssertEqual(restored.pending, [original])

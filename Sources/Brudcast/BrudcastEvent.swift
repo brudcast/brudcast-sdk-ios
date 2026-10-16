@@ -11,6 +11,10 @@ public struct BrudcastEvent: Equatable {
     public let occurredAt: Date
     public let channel: String
 
+    /// The external id of the user signed in when the event was queued, or nil for an anonymous
+    /// user. The core sets it, so a batch is only ever sent with that user's session.
+    var owner: String?
+
     /// - Parameters:
     ///   - type: The event type, such as `impression`.
     ///   - messageId: The message the event is about, when it is about one.
@@ -61,6 +65,7 @@ public struct BrudcastEvent: Equatable {
     var storedObject: [String: Any] {
         var object = apiObject
         object["channel"] = channel
+        object["owner"] = owner
         return object
     }
 
@@ -72,7 +77,7 @@ public struct BrudcastEvent: Equatable {
               let occurredAt = BrudcastDates.parse(occurredAtRaw) else {
             return nil
         }
-        return BrudcastEvent(
+        var event = BrudcastEvent(
             type: type,
             messageId: object["messageId"] as? String,
             buttonId: object["buttonId"] as? String,
@@ -82,6 +87,8 @@ public struct BrudcastEvent: Equatable {
             channel: object["channel"] as? String ?? coreChannel,
             id: id
         )
+        event.owner = object["owner"] as? String
+        return event
     }
 }
 

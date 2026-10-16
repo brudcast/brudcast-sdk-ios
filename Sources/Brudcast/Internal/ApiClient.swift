@@ -15,9 +15,10 @@ public struct BrudcastApiError: Error, CustomStringConvertible {
     /// True when the request never got a response, so retrying later may succeed.
     public var isNetwork: Bool { statusCode == nil }
 
-    /// True for a status worth retrying: no response, 408, 429 or any 5xx.
+    /// True for a failure worth retrying: no response, 408, 429 or any 5xx. A body that could not
+    /// be encoded never is, since it would fail the same way again.
     public var isRetryable: Bool {
-        guard let status = statusCode else { return true }
+        guard let status = statusCode else { return code != "encoding" }
         return status == 408 || status == 429 || status >= 500
     }
 
@@ -92,6 +93,10 @@ public final class BrudcastApiClient {
             request.setValue(publishableKey, forHTTPHeaderField: "X-Brudcast-Key")
         }
         if let body = body {
+            guard JSONSerialization.isValidJSONObject(body) else {
+                completion(.failure(BrudcastApiError(statusCode: nil, code: "encoding", message: "The request body is not valid JSON")))
+                return
+            }
             do {
                 request.httpBody = try JSONSerialization.data(withJSONObject: body, options: [])
                 request.setValue("application/json", forHTTPHeaderField: "Content-Type")

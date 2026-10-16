@@ -22,6 +22,29 @@ enum InboxScreen {
     }
 }
 
+/// Holds the hosting controller behind a rendered inbox entry, so the SwiftUI view keeps updating
+/// while the host only keeps the view.
+final class InboxDetailContainerView: UIView {
+    private let controller: UIViewController
+
+    init(controller: UIViewController) {
+        self.controller = controller
+        super.init(frame: .zero)
+        controller.view.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(controller.view)
+        NSLayoutConstraint.activate([
+            controller.view.leadingAnchor.constraint(equalTo: leadingAnchor),
+            controller.view.trailingAnchor.constraint(equalTo: trailingAnchor),
+            controller.view.topAnchor.constraint(equalTo: topAnchor),
+            controller.view.bottomAnchor.constraint(equalTo: bottomAnchor),
+        ])
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) is not supported")
+    }
+}
+
 struct InboxDetailView: View {
     let design: InAppDesign
     let theme: InAppTheme

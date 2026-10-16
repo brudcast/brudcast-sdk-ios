@@ -208,7 +208,13 @@ public final class BrudcastPush: BrudcastModule, BrudcastPushPermissionRequestin
     public func presentationOptions(for notification: UNNotification) -> UNNotificationPresentationOptions? {
         guard let parsed = BrudcastPushNotification(userInfo: notification.request.content.userInfo) else { return nil }
         Brudcast.withContext { context in
-            context.enqueue(BrudcastEvent(type: "push_received", messageId: parsed.messageId, properties: parsed.campaignId.map { ["campaignId": .string($0)] } ?? [:], channel: Self.eventChannel))
+            context.enqueue(BrudcastEvent(
+                type: "push_received",
+                messageId: parsed.messageId,
+                properties: parsed.campaignId.map { ["campaignId": .string($0)] } ?? [:],
+                channel: Self.eventChannel,
+                id: BrudcastSharedEvents.receivedEventId(messageId: parsed.messageId)
+            ))
         }
         let decision = Thread.isMainThread ? (notificationHandler?(parsed) ?? .show) : .show
         guard decision == .show else { return [] }
