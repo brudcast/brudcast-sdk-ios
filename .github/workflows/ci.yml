@@ -1,0 +1,16 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Logic tests
+        run: swift test
+      - name: Build for iOS
+        run: xcodebuild -scheme Brudcast-Package -destination 'generic/platform=iOS Simulator' build
