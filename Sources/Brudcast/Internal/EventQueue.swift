@@ -8,6 +8,7 @@ final class EventQueue {
     enum Outcome {
         case sent
         case rejected
+        case discarded
         case retry
         case unauthorized
     }
@@ -27,6 +28,8 @@ final class EventQueue {
     private(set) var inFlight: Set<String> = []
     private var failures = 0
     private(set) var retryAfter: Date?
+    private(set) var batchLimit = EventQueue.maxBatch
+    private var dirty = false
 
     init(storage: BrudcastStorage?, now: @escaping () -> Date = Date.init) {
         self.storage = storage
@@ -36,7 +39,8 @@ final class EventQueue {
         dropExpired()
     }
 
-    /// Adds an event.
+    /// Adds an event. It reaches disk on the next `persistIfNeeded`, so the core decides how often
+    /// the file is rewritten.
     ///
     /// - Parameter event: The event.
     /// - Returns: True when enough events are waiting that a flush should start now.
@@ -48,11 +52,12 @@ final class EventQueue {
             BrudcastLogger.shared.warning("Event queue is full, dropping the \(overflow) oldest events")
             pending.removeFirst(overflow)
         }
-        persist()
+        dirty = true
         return pending.count - inFlight.count >= Self.flushThreshold
     }
 
-    /// Takes the next batch to send: the oldest waiting events of one channel, up to 100.
+    /// Takes the next batch to send: the oldest waiting events of one channel and one owner, up to
+    /// the batch limit.
     ///
     /// - Returns: The batch, or nil when nothing is waiting, a batch is already out, or the queue is
     ///   backing off.
@@ -63,7 +68,7 @@ final class EventQueue {
         }
         dropExpired()
         guard let first = pending.first else { return nil }
-        let batch = Array(pending.filter { $0.channel == first.channel }.prefix(Self.maxBatch))
+        let batch = Array(pending.filter { $0.channel == first.channel && $0.owner == first.owner }.prefix(batchLimit))
         inFlight = Set(batch.map(\.id))
         return batch
     }
@@ -72,7 +77,9 @@ final class EventQueue {
     ///
     /// - Parameters:
     ///   - batch: The batch `nextBatch` returned.
-    ///   - outcome: Sent and rejected batches leave the queue; retried and unauthorized ones stay.
+    ///   - outcome: Sent and discarded batches leave the queue. A rejected batch of several events
+    ///     stays and the next batches are halved until the event the service refuses is sent alone
+    ///     and dropped. Retried and unauthorized batches stay.
     func complete(_ batch: [BrudcastEvent], outcome: Outcome) {
         let ids = Set(batch.map(\.id))
         inFlight.subtract(ids)
@@ -80,11 +87,16 @@ final class EventQueue {
         case .sent:
             failures = 0
             retryAfter = nil
+            batchLimit = Self.maxBatch
             pending.removeAll { ids.contains($0.id) }
-        case .rejected:
+        case .rejected where batch.count > 1:
             failures = 0
             retryAfter = nil
-            BrudcastLogger.shared.warning("The service rejected \(batch.count) events; they are dropped")
+            batchLimit = max(1, batch.count / 2)
+        case .rejected, .discarded:
+            failures = 0
+            retryAfter = nil
+            BrudcastLogger.shared.warning("\(batch.count) events could not be sent; they are dropped")
             pending.removeAll { ids.contains($0.id) }
         case .retry:
             failures += 1
@@ -93,7 +105,8 @@ final class EventQueue {
         case .unauthorized:
             retryAfter = nil
         }
-        persist()
+        dirty = true
+        persistIfNeeded()
     }
 
     /// Removes every waiting event.
@@ -102,11 +115,20 @@ final class EventQueue {
         inFlight.removeAll()
         failures = 0
         retryAfter = nil
-        persist()
+        batchLimit = Self.maxBatch
+        dirty = true
+        persistIfNeeded()
     }
 
     var waitingCount: Int {
         pending.count
+    }
+
+    /// Writes the queue to disk when it changed since the last write.
+    func persistIfNeeded() {
+        guard dirty else { return }
+        dirty = false
+        storage?.writeJSON(pending.map(\.storedObject), to: Self.fileName)
     }
 
     private func dropExpired() {
@@ -114,11 +136,8 @@ final class EventQueue {
         let before = pending.count
         pending.removeAll { $0.occurredAt < cutoff && !inFlight.contains($0.id) }
         if pending.count != before {
-            persist()
+            dirty = true
+            persistIfNeeded()
         }
-    }
-
-    private func persist() {
-        storage?.writeJSON(pending.map(\.storedObject), to: Self.fileName)
     }
 }

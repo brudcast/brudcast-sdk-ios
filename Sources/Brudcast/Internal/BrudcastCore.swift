@@ -17,6 +17,8 @@ final class BrudcastCore {
     private static let flushInterval: TimeInterval = 10
     private static let refreshLeeway: TimeInterval = 60
     private static let maxSessionBackoff: TimeInterval = 300
+    private static let persistDelay: TimeInterval = 1
+    private static let invalidBatchStatuses: Set<Int> = [400, 413, 422]
 
     let queue: DispatchQueue
     let options: BrudcastOptions
@@ -29,6 +31,9 @@ final class BrudcastCore {
     private(set) var session: BrudcastSession?
     private(set) var isAppActive = false
     private var identity: BrudcastIdentity?
+    private var eventOwner: String?
+    private var retiredSessions: [String: BrudcastSession] = [:]
+    private var persistScheduled = false
     private var identityRejected = false
     private var keyRejected = false
     private var trackingDisabled: Bool
@@ -54,6 +59,7 @@ final class BrudcastCore {
         self.events = EventQueue(storage: storage)
         self.trackingDisabled = storage.bool(Self.trackingDisabledKey)
         self.identity = Self.loadIdentity(storage: storage)
+        self.eventOwner = identity?.externalId
         self.context = BrudcastContext(core: self, options: options, storage: storage, api: api, queue: queue, deviceId: deviceId)
     }
 
@@ -83,11 +89,13 @@ final class BrudcastCore {
                 return
             }
             let userChanged = self.identity?.externalId != trimmed
+            self.eventOwner = trimmed
             self.flushThen {
                 self.identity = next
                 self.identityRejected = false
                 self.persistIdentity()
                 if userChanged {
+                    self.retire(self.session)
                     self.session = nil
                 }
                 self.reopenSession()
@@ -98,11 +106,13 @@ final class BrudcastCore {
     func reset() {
         queue.async {
             let previous = self.session
+            self.eventOwner = nil
             self.flushThen {
                 let finish = {
                     self.identity = nil
                     self.identityRejected = false
                     self.persistIdentity()
+                    self.retire(self.session ?? previous)
                     self.session = nil
                     for module in self.modules {
                         module.didReset()
@@ -130,6 +140,7 @@ final class BrudcastCore {
             BrudcastLogger.shared.error("track ignored \"\(name)\": names start with a letter and use at most 64 letters, digits and _ . : -")
             return
         }
+        let properties = properties.droppingNonFiniteNumbers()
         queue.async {
             self.enqueue(BrudcastEvent(type: "custom", name: name, properties: properties))
             for module in self.modules {
@@ -144,6 +155,7 @@ final class BrudcastCore {
             BrudcastLogger.shared.error("screen needs a name of 1 to 64 characters")
             return
         }
+        let properties = properties.droppingNonFiniteNumbers()
         queue.async {
             self.enqueue(BrudcastEvent(type: "screen", name: trimmed, properties: properties))
             for module in self.modules {
@@ -247,7 +259,7 @@ final class BrudcastCore {
 
     private func handleSessionFailure(_ error: BrudcastApiError, hadIdentity: Bool) {
         if error.statusCode == 401 {
-            if hadIdentity && !error.message.lowercased().contains("publishable key") {
+            if !Self.isKeyRejection(error, hadIdentity: hadIdentity) {
                 identityRejected = true
                 BrudcastLogger.shared.error("The service refused this user's identity: \(error.message). Compute userHash on your server as HMAC-SHA256(identitySecret, externalId), and call identify again.")
             } else {
@@ -261,6 +273,27 @@ final class BrudcastCore {
             scheduleSessionRetry()
         } else {
             BrudcastLogger.shared.error("Could not open a session: \(error)")
+        }
+    }
+
+    /// Tells a refused publishable key apart from a refused user hash on a 401 from `/sessions`.
+    ///
+    /// The service's `code` decides when it sends one. Otherwise a request without an identity can
+    /// only have failed on its key, and one with an identity failed on its key only when the
+    /// message names the key.
+    ///
+    /// - Parameters:
+    ///   - error: The 401.
+    ///   - hadIdentity: Whether the request carried an external id.
+    /// - Returns: True when the key was refused.
+    static func isKeyRejection(_ error: BrudcastApiError, hadIdentity: Bool) -> Bool {
+        switch error.code {
+        case "key_rejected":
+            return true
+        case "identity_rejected":
+            return false
+        default:
+            return !hadIdentity || error.message.lowercased().contains("publishable key")
         }
     }
 
@@ -358,37 +391,91 @@ final class BrudcastCore {
 
     func enqueue(_ event: BrudcastEvent) {
         guard !trackingDisabled else { return }
-        if events.enqueue(event) {
+        var owned = event
+        owned.owner = eventOwner
+        let flushNow = events.enqueue(owned)
+        schedulePersist()
+        if flushNow {
             flush()
         }
     }
 
+    /// Sends the next batch with the session of the user who queued it.
+    ///
+    /// Anonymous events go with whoever is signed in now, since an anonymous device that signs in is
+    /// the same person. Events of a user whose session is still opening wait for it. Events of a
+    /// user who has since signed out go with that user's last session while it lasts, and are
+    /// dropped after that rather than credited to someone else.
     func flush() {
         guard !flushing else { return }
-        guard let batch = events.nextBatch() else {
+        guard let batch = events.nextBatch(), let first = batch.first else {
             drainFlushWaiters()
             return
         }
-        flushing = true
-        authorizedRequest(.post, "/events", body: ["events": batch.map(\.apiObject)]) { result in
-            self.flushing = false
-            switch result {
-            case .success:
-                self.events.complete(batch, outcome: .sent)
-                self.flush()
-            case .failure(let error):
-                if error.statusCode == 401 || error.code == "key_rejected" || error.code == "identity_rejected" {
-                    self.events.complete(batch, outcome: .unauthorized)
-                    self.drainFlushWaiters()
-                } else if error.isRetryable {
-                    self.events.complete(batch, outcome: .retry)
-                    self.drainFlushWaiters()
-                } else {
-                    BrudcastLogger.shared.warning("Events rejected: \(error)")
-                    self.events.complete(batch, outcome: .rejected)
-                    self.flush()
-                }
+        let body: [String: Any] = ["events": batch.map(\.apiObject)]
+        guard let owner = first.owner, owner != identity?.externalId else {
+            flushing = true
+            authorizedRequest(.post, "/events", body: body) { result in
+                self.finishFlush(batch, result: result, retiredOwner: nil)
             }
+            return
+        }
+        if owner == eventOwner {
+            events.complete(batch, outcome: .unauthorized)
+            drainFlushWaiters()
+            return
+        }
+        guard let retired = retiredSessions[owner], !isExpiring(retired) else {
+            retiredSessions[owner] = nil
+            BrudcastLogger.shared.warning("\(batch.count) events of a signed-out user outlived their session")
+            events.complete(batch, outcome: .discarded)
+            flush()
+            return
+        }
+        flushing = true
+        api.send(.post, "/events", body: body, token: retired.token) { result in
+            self.queue.async {
+                self.finishFlush(batch, result: result, retiredOwner: owner)
+            }
+        }
+    }
+
+    private func finishFlush(_ batch: [BrudcastEvent], result: Result<[String: Any], BrudcastApiError>, retiredOwner: String?) {
+        flushing = false
+        switch result {
+        case .success:
+            events.complete(batch, outcome: .sent)
+            flush()
+        case .failure(let error) where error.statusCode == 401 && retiredOwner != nil:
+            retiredSessions[retiredOwner!] = nil
+            events.complete(batch, outcome: .discarded)
+            flush()
+        case .failure(let error) where error.statusCode == 401 || error.code == "key_rejected" || error.code == "identity_rejected":
+            events.complete(batch, outcome: .unauthorized)
+            drainFlushWaiters()
+        case .failure(let error) where error.isRetryable:
+            events.complete(batch, outcome: .retry)
+            drainFlushWaiters()
+        case .failure(let error):
+            BrudcastLogger.shared.warning("Events rejected: \(error)")
+            let invalid = error.statusCode.map(Self.invalidBatchStatuses.contains) ?? false
+            events.complete(batch, outcome: invalid ? .rejected : .discarded)
+            flush()
+        }
+    }
+
+    private func retire(_ session: BrudcastSession?) {
+        retiredSessions = retiredSessions.filter { !isExpiring($0.value) }
+        guard let session = session, let externalId = session.externalId, !isExpiring(session) else { return }
+        retiredSessions[externalId] = session
+    }
+
+    private func schedulePersist() {
+        guard !persistScheduled else { return }
+        persistScheduled = true
+        queue.asyncAfter(deadline: .now() + Self.persistDelay) {
+            self.persistScheduled = false
+            self.events.persistIfNeeded()
         }
     }
 
@@ -451,6 +538,9 @@ final class BrudcastCore {
         observers.append(center.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: nil) { [weak self] _ in
             self?.appDidEnterBackground()
         })
+        observers.append(center.addObserver(forName: UIApplication.willTerminateNotification, object: nil, queue: nil) { [weak self] _ in
+            self?.queue.sync { self?.events.persistIfNeeded() }
+        })
         DispatchQueue.main.async {
             if UIApplication.shared.applicationState == .active {
                 self.queue.async { self.appDidBecomeActive() }
@@ -464,6 +554,7 @@ final class BrudcastCore {
     private func appDidBecomeActive() {
         guard !isAppActive else { return }
         isAppActive = true
+        keyRejected = false
         startFlushTimer()
         if session == nil || isExpiring(session) {
             openSession { _ in }
@@ -484,6 +575,7 @@ final class BrudcastCore {
         }
         queue.async {
             self.isAppActive = false
+            self.events.persistIfNeeded()
             self.stopFlushTimer()
             for module in self.modules {
                 module.appDidEnterBackground()

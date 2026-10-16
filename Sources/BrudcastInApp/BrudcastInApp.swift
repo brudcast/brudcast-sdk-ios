@@ -227,7 +227,13 @@ public final class BrudcastInApp: BrudcastModule {
             context.enqueue(BrudcastEvent(type: "delivered", messageId: id, channel: Self.eventChannel))
         }
         for message in store.messages {
-            if case .unsupported(let reason) = message.designState, store.markUnsupportedReported(message.id) {
+            var reason: String?
+            if case .unsupported(let error) = message.designState {
+                reason = "\(error)"
+            } else if message.triggerUnreadable {
+                reason = "unreadable trigger"
+            }
+            if let reason = reason, store.markUnsupportedReported(message.id) {
                 BrudcastLogger.shared.warning("Message \(message.id) needs a newer SDK or has an unreadable design: \(reason)")
                 context.enqueue(BrudcastEvent(
                     type: "render_unsupported",

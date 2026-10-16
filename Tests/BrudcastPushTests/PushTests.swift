@@ -31,6 +31,13 @@ final class PushPayloadTests: XCTestCase {
         XCTAssertTrue(BrudcastPush.shared.isBrudcastNotification(payload))
     }
 
+    func testTheReceivedEventIdIsTheSameWhereverTheDeliveryIsRecorded() {
+        let id = BrudcastSharedEvents.receivedEventId(messageId: "pm_1")
+        XCTAssertEqual(id, BrudcastSharedEvents.receivedEventId(messageId: "pm_1"))
+        XCTAssertNotEqual(id, BrudcastSharedEvents.receivedEventId(messageId: "pm_2"))
+        XCTAssertNotNil(UUID(uuidString: id))
+    }
+
     func testFindsTheImageFcmAttached() {
         XCTAssertEqual(BrudcastNotificationServiceExtension.imageURL(in: payload), URL(string: "https://cdn.example.com/sale.png"))
         XCTAssertNil(BrudcastNotificationServiceExtension.imageURL(in: ["fcm_options": ["image": "http://insecure.example.com/a.png"]]))

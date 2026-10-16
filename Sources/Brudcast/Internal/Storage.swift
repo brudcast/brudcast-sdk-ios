@@ -103,24 +103,53 @@ enum DeviceIdentifier {
     private static let account = "device_id"
     private static let fallbackKey = "brudcast.device_id"
 
-    static func load(storage: BrudcastStorage) -> String {
-        if let existing = readKeychain() {
-            return existing
-        }
-        if let fallback = storage.string(fallbackKey) {
-            if writeKeychain(fallback) {
-                storage.set(nil, for: fallbackKey)
-            }
-            return fallback
-        }
-        let created = UUID().uuidString.lowercased()
-        if !writeKeychain(created) {
-            storage.set(created, for: fallbackKey)
-        }
-        return created
+    enum KeychainRead: Equatable {
+        case found(String)
+        case missing
+        case unavailable(OSStatus)
     }
 
-    private static func readKeychain() -> String? {
+    /// Loads this install's device id, creating it on first launch.
+    ///
+    /// The Keychain item is only ever added or updated, never deleted, so a launch that cannot read
+    /// it, such as a background launch before the first unlock, does not destroy it. Such a launch
+    /// uses an id for this process alone and leaves storage untouched.
+    ///
+    /// - Parameter storage: Where the id lives when the Keychain cannot be used at all.
+    /// - Returns: The device id.
+    static func load(storage: BrudcastStorage) -> String {
+        load(storage: storage, read: readKeychain, write: writeKeychain)
+    }
+
+    /// Loads the device id through the given Keychain access, so tests can stand in for it.
+    ///
+    /// - Parameters:
+    ///   - storage: Where the id lives when the Keychain cannot be used at all.
+    ///   - read: Reads the Keychain item.
+    ///   - write: Adds or updates the Keychain item, returning the Keychain status.
+    /// - Returns: The device id.
+    static func load(storage: BrudcastStorage, read: () -> KeychainRead, write: (String) -> OSStatus) -> String {
+        switch read() {
+        case .found(let existing):
+            return existing
+        case .unavailable(let status):
+            if let fallback = storage.string(fallbackKey) {
+                return fallback
+            }
+            BrudcastLogger.shared.warning("The Keychain is unavailable (\(status)), so this launch uses a temporary device id")
+            return UUID().uuidString.lowercased()
+        case .missing:
+            let id = storage.string(fallbackKey) ?? UUID().uuidString.lowercased()
+            if write(id) == errSecSuccess {
+                storage.set(nil, for: fallbackKey)
+            } else {
+                storage.set(id, for: fallbackKey)
+            }
+            return id
+        }
+    }
+
+    private static func readKeychain() -> KeychainRead {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
@@ -129,26 +158,32 @@ enum DeviceIdentifier {
             kSecMatchLimit as String: kSecMatchLimitOne,
         ]
         var result: AnyObject?
-        guard SecItemCopyMatching(query as CFDictionary, &result) == errSecSuccess,
-              let data = result as? Data,
-              let value = String(data: data, encoding: .utf8),
-              !value.isEmpty else {
-            return nil
+        let status = SecItemCopyMatching(query as CFDictionary, &result)
+        switch status {
+        case errSecSuccess:
+            guard let data = result as? Data, let value = String(data: data, encoding: .utf8), !value.isEmpty else {
+                return .missing
+            }
+            return .found(value)
+        case errSecItemNotFound:
+            return .missing
+        default:
+            return .unavailable(status)
         }
-        return value
     }
 
-    private static func writeKeychain(_ value: String) -> Bool {
+    private static func writeKeychain(_ value: String) -> OSStatus {
         let identity: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
             kSecAttrAccount as String: account,
         ]
-        SecItemDelete(identity as CFDictionary)
         var attributes = identity
         attributes[kSecValueData as String] = Data(value.utf8)
         attributes[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
         attributes[kSecAttrSynchronizable as String] = false
-        return SecItemAdd(attributes as CFDictionary, nil) == errSecSuccess
+        let status = SecItemAdd(attributes as CFDictionary, nil)
+        guard status == errSecDuplicateItem else { return status }
+        return SecItemUpdate(identity as CFDictionary, [kSecValueData as String: Data(value.utf8)] as CFDictionary)
     }
 }

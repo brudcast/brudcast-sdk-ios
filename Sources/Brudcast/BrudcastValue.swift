@@ -35,12 +35,16 @@ public enum BrudcastValue: Equatable, Hashable {
 
     /// Returns the value in the form `JSONSerialization` writes.
     ///
-    /// - Returns: A `String`, an `NSNumber` or `NSNull`.
+    /// - Returns: A `String`, an `NSNumber` or `NSNull`. A NaN or infinite number becomes `NSNull`,
+    ///   because JSON cannot carry it and `JSONSerialization` raises an exception on it.
     public var jsonObject: Any {
         switch self {
         case .string(let value):
             return value
         case .number(let value):
+            guard value.isFinite else {
+                return NSNull()
+            }
             if value.rounded() == value, abs(value) < 9_007_199_254_740_992 {
                 return NSNumber(value: Int64(value))
             }
@@ -100,6 +104,17 @@ public typealias BrudcastProperties = [String: BrudcastValue]
 extension Dictionary where Key == String, Value == BrudcastValue {
     var jsonObject: [String: Any] {
         mapValues { $0.jsonObject }
+    }
+
+    /// Drops NaN and infinite numbers, which JSON cannot carry, and logs each one dropped.
+    ///
+    /// - Returns: The properties without them.
+    func droppingNonFiniteNumbers() -> BrudcastProperties {
+        filter { key, value in
+            guard case .number(let number) = value, !number.isFinite else { return true }
+            BrudcastLogger.shared.warning("Property \"\(key)\" is \(number), which JSON cannot carry; it is dropped")
+            return false
+        }
     }
 
     static func from(json: Any?) -> BrudcastProperties {

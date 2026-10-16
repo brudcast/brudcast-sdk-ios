@@ -67,6 +67,66 @@ final class CoreTests: XCTestCase {
         XCTAssertEqual(String(data: data, encoding: .utf8), #"{"d":1.5,"n":3}"#)
     }
 
+    func testNonFiniteNumbersNeverReachJsonSerialization() throws {
+        let object: [String: Any] = ["nan": BrudcastValue.number(.nan).jsonObject, "inf": BrudcastValue.number(.infinity).jsonObject]
+        XCTAssertTrue(JSONSerialization.isValidJSONObject(object))
+        let properties: BrudcastProperties = ["ok": 1, "nan": .number(.nan), "inf": .number(-.infinity)]
+        XCTAssertEqual(properties.droppingNonFiniteNumbers(), ["ok": 1])
+    }
+
+    func testAnUnencodableBodyFailsWithoutRetrying() {
+        let client = BrudcastApiClient(baseURL: URL(string: "https://example.com/sdk/v1")!, publishableKey: "bpk_test")
+        let done = expectation(description: "completion")
+        client.send(.post, "/events", body: ["n": Double.nan]) { result in
+            guard case .failure(let error) = result else { return XCTFail("Expected a failure") }
+            XCTAssertEqual(error.code, "encoding")
+            XCTAssertFalse(error.isRetryable)
+            done.fulfill()
+        }
+        wait(for: [done], timeout: 1)
+    }
+
+    func testTellsARefusedKeyFromARefusedUserHash() {
+        let hashRefused = BrudcastApiError(statusCode: 401, code: nil, message: "The user hash does not match this user")
+        let keyRefused = BrudcastApiError(statusCode: 401, code: nil, message: "Unknown or disabled publishable key")
+        XCTAssertFalse(BrudcastCore.isKeyRejection(hashRefused, hadIdentity: true))
+        XCTAssertTrue(BrudcastCore.isKeyRejection(keyRefused, hadIdentity: true))
+        XCTAssertTrue(BrudcastCore.isKeyRejection(hashRefused, hadIdentity: false))
+        XCTAssertFalse(BrudcastCore.isKeyRejection(BrudcastApiError(statusCode: 401, code: "identity_rejected", message: "publishable key"), hadIdentity: true))
+        XCTAssertTrue(BrudcastCore.isKeyRejection(BrudcastApiError(statusCode: 401, code: "key_rejected", message: ""), hadIdentity: true))
+    }
+
+    func testAnUnreadableKeychainNeverReplacesTheStoredDeviceId() {
+        let storage = makeStorage()
+        var writes: [String] = []
+        let temporary = DeviceIdentifier.load(storage: storage, read: { .unavailable(errSecInteractionNotAllowed) }, write: { writes.append($0); return errSecSuccess })
+        XCTAssertFalse(temporary.isEmpty)
+        XCTAssertTrue(writes.isEmpty)
+        XCTAssertNil(storage.string("brudcast.device_id"))
+
+        let kept = DeviceIdentifier.load(storage: storage, read: { .found("kept-id") }, write: { writes.append($0); return errSecSuccess })
+        XCTAssertEqual(kept, "kept-id")
+        XCTAssertTrue(writes.isEmpty)
+    }
+
+    func testAMissingDeviceIdIsCreatedOnceAndFallsBackWithoutAKeychain() {
+        let storage = makeStorage()
+        let created = DeviceIdentifier.load(storage: storage, read: { .missing }, write: { _ in errSecMissingEntitlement })
+        XCTAssertEqual(storage.string("brudcast.device_id"), created)
+        XCTAssertEqual(DeviceIdentifier.load(storage: storage, read: { .missing }, write: { _ in errSecMissingEntitlement }), created)
+
+        var stored: String?
+        XCTAssertEqual(DeviceIdentifier.load(storage: storage, read: { .missing }, write: { stored = $0; return errSecSuccess }), created)
+        XCTAssertEqual(stored, created)
+        XCTAssertNil(storage.string("brudcast.device_id"))
+    }
+
+    private func makeStorage() -> BrudcastStorage {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        addTeardownBlock { try? FileManager.default.removeItem(at: directory) }
+        return BrudcastStorage(defaults: UserDefaults(suiteName: UUID().uuidString)!, directory: directory)
+    }
+
     func testDropsEmptyTraits() {
         let traits = BrudcastTraits(email: "a@b.co", firstName: "  ").jsonObject
         XCTAssertEqual(traits.count, 1)

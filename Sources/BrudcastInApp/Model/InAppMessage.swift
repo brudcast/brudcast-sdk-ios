@@ -29,6 +29,9 @@ struct InAppTrigger: Equatable {
 
     static let onSession = InAppTrigger(type: .onSession, eventName: nil, screenName: nil, filters: [])
 
+    /// Stands in for a trigger this SDK cannot read; no occurrence ever matches it.
+    static let unreadable = InAppTrigger(type: .event, eventName: nil, screenName: nil, filters: [])
+
     static func parse(_ raw: Any?) -> InAppTrigger? {
         guard let object = raw as? [String: Any] else { return .onSession }
         guard let type = InAppTriggerType(rawValue: object["type"] as? String ?? "on_session") else { return nil }
@@ -106,6 +109,7 @@ struct InAppMessage: Equatable {
     var startsAt: Date?
     var endsAt: Date?
     var createdAt: Date
+    var triggerUnreadable = false
 
     var design: InAppDesign? {
         if case .ready(let design) = designState {
@@ -123,15 +127,16 @@ struct InAppMessage: Equatable {
     /// Reads one entry of a feed or inbox page.
     ///
     /// - Parameter raw: The decoded message view.
-    /// - Returns: The message, or nil when it lacks an id, a format or a readable trigger. A design
-    ///   this SDK cannot draw still yields a message, marked unsupported, so it can be reported.
+    /// - Returns: The message, or nil when it lacks an id or a format. A design this SDK cannot draw,
+    ///   or a trigger it cannot read, still yields a message that never shows on its own, so it can
+    ///   be reported.
     static func parse(_ raw: Any) -> InAppMessage? {
         guard let object = raw as? [String: Any],
               let id = object["id"] as? String,
-              let format = (object["format"] as? String).flatMap(InAppFormat.init(rawValue:)),
-              let trigger = InAppTrigger.parse(object["trigger"]) else {
+              let format = (object["format"] as? String).flatMap(InAppFormat.init(rawValue:)) else {
             return nil
         }
+        let parsedTrigger = InAppTrigger.parse(object["trigger"])
         let rawDesign = object["design"] as? [String: Any] ?? [:]
         let designState: InAppDesignState
         do {
@@ -150,7 +155,7 @@ struct InAppMessage: Equatable {
             format: format,
             designState: designState,
             rawDesign: rawDesign,
-            trigger: trigger,
+            trigger: parsedTrigger ?? .unreadable,
             displayRules: InAppDisplayRules.parse(object["displayRules"]),
             inboxTitle: inbox["title"] as? String ?? "",
             inboxPreview: inbox["preview"] as? String ?? "",
@@ -161,7 +166,8 @@ struct InAppMessage: Equatable {
             impressionCount: (object["impressionCount"] as? NSNumber)?.intValue ?? 0,
             startsAt: BrudcastDates.parse(object["startsAt"] as? String),
             endsAt: BrudcastDates.parse(object["endsAt"] as? String),
-            createdAt: BrudcastDates.parse(object["createdAt"] as? String) ?? Date()
+            createdAt: BrudcastDates.parse(object["createdAt"] as? String) ?? Date(),
+            triggerUnreadable: parsedTrigger == nil
         )
     }
 

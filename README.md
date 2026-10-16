@@ -149,7 +149,9 @@ environment accepts device tokens, the SDK logs a warning once and keeps the tok
   7 days are dropped.
 - The device id is a random UUID in the Keychain, never the IDFA or IDFV.
 - `Brudcast.disableTracking()` stops all event collection, for consent frameworks.
-- Each product ships a privacy manifest.
+- Each product ships a privacy manifest. The core's declares the device id, the user id you pass,
+  any email address, phone number and name you pass in `BrudcastTraits`, and interactions with
+  messages, none of it used for tracking. Your app's App Store privacy answers should match.
 
 ## Develop
 
@@ -159,3 +161,11 @@ xcodebuild -scheme Brudcast-Package -destination 'generic/platform=iOS Simulator
 ```
 
 `.local(port: 8191)` points the SDK at `brudcast-in-app-delivery-service` running on this machine.
+
+## Security
+
+Report vulnerabilities privately as described in [SECURITY.md](SECURITY.md), never in a public issue.
+
+## License
+
+Apache License 2.0. See [LICENSE](LICENSE) and [NOTICE](NOTICE).
