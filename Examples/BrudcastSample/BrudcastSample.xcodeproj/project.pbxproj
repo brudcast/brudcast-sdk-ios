@@ -1,0 +1,711 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		00D320BAED2DBD6890FD45C7 /* BrudcastNotificationService in Frameworks */ = {isa = PBXBuildFile; productRef = 1659BAF59B955B0576497279 /* BrudcastNotificationService */; };
+		0293C142A93673EB8637C96E /* NotificationService.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 11FBD96348D15CAE5D08BB9C /* NotificationService.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		0966029502757D93FB3CE198 /* ActionLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF0F60ED0F3A0E9F37A92F78 /* ActionLog.swift */; };
+		2E9024C6BC40AA52EB473D4B /* BrudcastSampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1349D69A4B78DF61DE02DC0 /* BrudcastSampleApp.swift */; };
+		2F1BC35E2E32D6BB9DAB7C77 /* HankenGrotesk.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B6A8A7EFAB0B1B3F365C7AE8 /* HankenGrotesk.ttf */; };
+		322FD6E9A39094A6C59AA9B4 /* ShopViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E5B8C406975C6FBFE4441E3 /* ShopViews.swift */; };
+		47C68E09F9F4B2D8F20CCE1B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02D54744C67C283D460A6581 /* AppDelegate.swift */; };
+		4B3E2BBEFFA3636290D0A793 /* BrudcastInApp in Frameworks */ = {isa = PBXBuildFile; productRef = 97B584488B505D0A5B2BC1C1 /* BrudcastInApp */; };
+		4CE6907A7D14072E8D5626C0 /* SampleRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62862FF57E3DE629A8103A8A /* SampleRouter.swift */; };
+		4D746E284310FDE2816B6EA8 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29CB0CBEAA448735B2DF5CBF /* Components.swift */; };
+		6DA595937860F992CC429E86 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E475C81DF3C0D1AB56920DD5 /* RootView.swift */; };
+		892010E78BC8222FC590C7C5 /* SampleBackend.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D88E133CD62FE021D1831B9 /* SampleBackend.swift */; };
+		8C499496BB1CE18187DB4144 /* AccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A5F8EEF3E544E3439A20BA7 /* AccountView.swift */; };
+		9DFF64B2F4F1518230B62A32 /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7F0B245C82FC15EE48367E4 /* SignInView.swift */; };
+		B9FF38E8595920A8CA1C3870 /* SampleConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 633A442011E3585EBEFF4AA3 /* SampleConfig.swift */; };
+		C06BFDCFAB764699DFBFDAB4 /* BrudcastPush in Frameworks */ = {isa = PBXBuildFile; productRef = B2427A1648CEEC2615A1A74E /* BrudcastPush */; };
+		CE437B19F20995EBDB79E687 /* Gabarito.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8D191984DBEC55504AF7AA1C /* Gabarito.ttf */; };
+		CFFE877D4B783FCDA5E2466D /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DC1B71729726BDE1AD557F7 /* NotificationService.swift */; };
+		D1D16B7A21B2E46C37ACEB16 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BC28B65D6ECD3771DA27D02 /* Theme.swift */; };
+		D754C0753FBB69B8FA52917B /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43838159859C6ADDD80405DB /* HomeView.swift */; };
+		D8B59E0C11A4EDD3ECB58D8D /* CustomerFlowUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 313B80AEEBD9A9638052A3DE /* CustomerFlowUITests.swift */; };
+		EDF0C46B7B72337E7AF41B60 /* Catalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDDF325DCCC3275691031BB0 /* Catalog.swift */; };
+		FCC3B2519C7F804EAD5C05C1 /* SampleSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E81D3E9B5E26156BD052E80 /* SampleSession.swift */; };
+		FCF9BDB9C174D71BF3DC36EE /* Brudcast in Frameworks */ = {isa = PBXBuildFile; productRef = A39F229336556B5D69F1C364 /* Brudcast */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		68A545A31E83392B86FCF496 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 971E24A0497E94A0327B61B9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5D68BDC36D059A1C794F8CC1;
+			remoteInfo = NotificationService;
+		};
+		8F03BE7575164ABE09392E83 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 971E24A0497E94A0327B61B9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9364E5EC0A865847A4377870;
+			remoteInfo = BrudcastSample;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		6147983882044B8961846C65 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				0293C142A93673EB8637C96E /* NotificationService.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		02D54744C67C283D460A6581 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		11FBD96348D15CAE5D08BB9C /* NotificationService.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = NotificationService.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		1D88E133CD62FE021D1831B9 /* SampleBackend.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleBackend.swift; sourceTree = "<group>"; };
+		29CB0CBEAA448735B2DF5CBF /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
+		2E5B8C406975C6FBFE4441E3 /* ShopViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopViews.swift; sourceTree = "<group>"; };
+		313B80AEEBD9A9638052A3DE /* CustomerFlowUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerFlowUITests.swift; sourceTree = "<group>"; };
+		42D37756795F531DE55581B3 /* BrudcastSampleUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = BrudcastSampleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		43838159859C6ADDD80405DB /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		480EAD6F0E2C07E6E9F597DF /* BrudcastSample.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = BrudcastSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4BC28B65D6ECD3771DA27D02 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		62862FF57E3DE629A8103A8A /* SampleRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleRouter.swift; sourceTree = "<group>"; };
+		633A442011E3585EBEFF4AA3 /* SampleConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleConfig.swift; sourceTree = "<group>"; };
+		6A1FB0CA5434E25242F0E245 /* BrudcastSample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BrudcastSample.entitlements; sourceTree = "<group>"; };
+		6E81D3E9B5E26156BD052E80 /* SampleSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleSession.swift; sourceTree = "<group>"; };
+		7A5F8EEF3E544E3439A20BA7 /* AccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountView.swift; sourceTree = "<group>"; };
+		869E0742CDD2C4817129E166 /* Sample.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Sample.xcconfig; sourceTree = "<group>"; };
+		8979F1991654F0B959CE6F58 /* brudcast-sdk-ios */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "brudcast-sdk-ios"; path = ../..; sourceTree = SOURCE_ROOT; };
+		8D191984DBEC55504AF7AA1C /* Gabarito.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Gabarito.ttf; sourceTree = "<group>"; };
+		8DC1B71729726BDE1AD557F7 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
+		915DA3880DFAE00FB6B6878B /* NotificationService.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NotificationService.entitlements; sourceTree = "<group>"; };
+		AD9E70F2E81488AA17F4991D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		B6A8A7EFAB0B1B3F365C7AE8 /* HankenGrotesk.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = HankenGrotesk.ttf; sourceTree = "<group>"; };
+		BF225F743A5111CCBF3A9D27 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		C7F0B245C82FC15EE48367E4 /* SignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
+		E475C81DF3C0D1AB56920DD5 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		EF0F60ED0F3A0E9F37A92F78 /* ActionLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionLog.swift; sourceTree = "<group>"; };
+		F1349D69A4B78DF61DE02DC0 /* BrudcastSampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrudcastSampleApp.swift; sourceTree = "<group>"; };
+		FDDF325DCCC3275691031BB0 /* Catalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Catalog.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		02955429712494A8612E3B05 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FCF9BDB9C174D71BF3DC36EE /* Brudcast in Frameworks */,
+				4B3E2BBEFFA3636290D0A793 /* BrudcastInApp in Frameworks */,
+				C06BFDCFAB764699DFBFDAB4 /* BrudcastPush in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9B7A148EB2FDFF414889A6FD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				00D320BAED2DBD6890FD45C7 /* BrudcastNotificationService in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1F3FB43FB0F1586A1770E8F4 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				7A5F8EEF3E544E3439A20BA7 /* AccountView.swift */,
+				43838159859C6ADDD80405DB /* HomeView.swift */,
+				E475C81DF3C0D1AB56920DD5 /* RootView.swift */,
+				2E5B8C406975C6FBFE4441E3 /* ShopViews.swift */,
+				C7F0B245C82FC15EE48367E4 /* SignInView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		5251145A535CDE4F63F67160 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				480EAD6F0E2C07E6E9F597DF /* BrudcastSample.app */,
+				42D37756795F531DE55581B3 /* BrudcastSampleUITests.xctest */,
+				11FBD96348D15CAE5D08BB9C /* NotificationService.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		571E42FF0BB52580F64A8F35 /* BrudcastSample */ = {
+			isa = PBXGroup;
+			children = (
+				EF0F60ED0F3A0E9F37A92F78 /* ActionLog.swift */,
+				02D54744C67C283D460A6581 /* AppDelegate.swift */,
+				6A1FB0CA5434E25242F0E245 /* BrudcastSample.entitlements */,
+				F1349D69A4B78DF61DE02DC0 /* BrudcastSampleApp.swift */,
+				FDDF325DCCC3275691031BB0 /* Catalog.swift */,
+				AD9E70F2E81488AA17F4991D /* Info.plist */,
+				1D88E133CD62FE021D1831B9 /* SampleBackend.swift */,
+				633A442011E3585EBEFF4AA3 /* SampleConfig.swift */,
+				62862FF57E3DE629A8103A8A /* SampleRouter.swift */,
+				6E81D3E9B5E26156BD052E80 /* SampleSession.swift */,
+				B357652F4CAFEF608B561695 /* Fonts */,
+				6CFE32D8AE56B3472D64BF3B /* Theme */,
+				1F3FB43FB0F1586A1770E8F4 /* Views */,
+			);
+			path = BrudcastSample;
+			sourceTree = "<group>";
+		};
+		6CFE32D8AE56B3472D64BF3B /* Theme */ = {
+			isa = PBXGroup;
+			children = (
+				29CB0CBEAA448735B2DF5CBF /* Components.swift */,
+				4BC28B65D6ECD3771DA27D02 /* Theme.swift */,
+			);
+			path = Theme;
+			sourceTree = "<group>";
+		};
+		79B183B67732CEEF2A90B4C9 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				869E0742CDD2C4817129E166 /* Sample.xcconfig */,
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
+		8CBD42B1CD4A5B6F9E87CD0B /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				8979F1991654F0B959CE6F58 /* brudcast-sdk-ios */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
+		AA93DDD4933C24C82A33EE23 /* NotificationService */ = {
+			isa = PBXGroup;
+			children = (
+				BF225F743A5111CCBF3A9D27 /* Info.plist */,
+				915DA3880DFAE00FB6B6878B /* NotificationService.entitlements */,
+				8DC1B71729726BDE1AD557F7 /* NotificationService.swift */,
+			);
+			path = NotificationService;
+			sourceTree = "<group>";
+		};
+		B357652F4CAFEF608B561695 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				8D191984DBEC55504AF7AA1C /* Gabarito.ttf */,
+				B6A8A7EFAB0B1B3F365C7AE8 /* HankenGrotesk.ttf */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
+		F81C831637495579EFDA082C = {
+			isa = PBXGroup;
+			children = (
+				571E42FF0BB52580F64A8F35 /* BrudcastSample */,
+				FD061ECB8AFAFE5ECA1D520F /* BrudcastSampleUITests */,
+				79B183B67732CEEF2A90B4C9 /* Config */,
+				AA93DDD4933C24C82A33EE23 /* NotificationService */,
+				8CBD42B1CD4A5B6F9E87CD0B /* Packages */,
+				5251145A535CDE4F63F67160 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		FD061ECB8AFAFE5ECA1D520F /* BrudcastSampleUITests */ = {
+			isa = PBXGroup;
+			children = (
+				313B80AEEBD9A9638052A3DE /* CustomerFlowUITests.swift */,
+			);
+			path = BrudcastSampleUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		3BC0ABF768C7775B77F589E2 /* BrudcastSampleUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 73D1E13312338DF5E0776C8C /* Build configuration list for PBXNativeTarget "BrudcastSampleUITests" */;
+			buildPhases = (
+				66B4EAE9B30641AA7E032B8F /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1531D62D4F089D0A6337D971 /* PBXTargetDependency */,
+			);
+			name = BrudcastSampleUITests;
+			packageProductDependencies = (
+			);
+			productName = BrudcastSampleUITests;
+			productReference = 42D37756795F531DE55581B3 /* BrudcastSampleUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		5D68BDC36D059A1C794F8CC1 /* NotificationService */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 34EB297571A82BB68C31D661 /* Build configuration list for PBXNativeTarget "NotificationService" */;
+			buildPhases = (
+				1706C2FD6165385789695211 /* Sources */,
+				9B7A148EB2FDFF414889A6FD /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = NotificationService;
+			packageProductDependencies = (
+				1659BAF59B955B0576497279 /* BrudcastNotificationService */,
+			);
+			productName = NotificationService;
+			productReference = 11FBD96348D15CAE5D08BB9C /* NotificationService.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		9364E5EC0A865847A4377870 /* BrudcastSample */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1887720D6FB26B76783BA761 /* Build configuration list for PBXNativeTarget "BrudcastSample" */;
+			buildPhases = (
+				99856096828CBD9F08BE04F0 /* Sources */,
+				C0B6DBAE7E8D49F9CD9C057B /* Resources */,
+				02955429712494A8612E3B05 /* Frameworks */,
+				6147983882044B8961846C65 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				BFA4A149A6A27CBF17D1A910 /* PBXTargetDependency */,
+			);
+			name = BrudcastSample;
+			packageProductDependencies = (
+				A39F229336556B5D69F1C364 /* Brudcast */,
+				97B584488B505D0A5B2BC1C1 /* BrudcastInApp */,
+				B2427A1648CEEC2615A1A74E /* BrudcastPush */,
+			);
+			productName = BrudcastSample;
+			productReference = 480EAD6F0E2C07E6E9F597DF /* BrudcastSample.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		971E24A0497E94A0327B61B9 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					3BC0ABF768C7775B77F589E2 = {
+						ProvisioningStyle = Automatic;
+						TestTargetID = 9364E5EC0A865847A4377870;
+					};
+					5D68BDC36D059A1C794F8CC1 = {
+						ProvisioningStyle = Automatic;
+					};
+					9364E5EC0A865847A4377870 = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 9A82133427A666AECFD4F533 /* Build configuration list for PBXProject "BrudcastSample" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = F81C831637495579EFDA082C;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				43F88357EBC56B7EFB6300C0 /* XCLocalSwiftPackageReference "../.." */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 5251145A535CDE4F63F67160 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				9364E5EC0A865847A4377870 /* BrudcastSample */,
+				5D68BDC36D059A1C794F8CC1 /* NotificationService */,
+				3BC0ABF768C7775B77F589E2 /* BrudcastSampleUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		C0B6DBAE7E8D49F9CD9C057B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CE437B19F20995EBDB79E687 /* Gabarito.ttf in Resources */,
+				2F1BC35E2E32D6BB9DAB7C77 /* HankenGrotesk.ttf in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1706C2FD6165385789695211 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CFFE877D4B783FCDA5E2466D /* NotificationService.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		66B4EAE9B30641AA7E032B8F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D8B59E0C11A4EDD3ECB58D8D /* CustomerFlowUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		99856096828CBD9F08BE04F0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8C499496BB1CE18187DB4144 /* AccountView.swift in Sources */,
+				0966029502757D93FB3CE198 /* ActionLog.swift in Sources */,
+				47C68E09F9F4B2D8F20CCE1B /* AppDelegate.swift in Sources */,
+				2E9024C6BC40AA52EB473D4B /* BrudcastSampleApp.swift in Sources */,
+				EDF0C46B7B72337E7AF41B60 /* Catalog.swift in Sources */,
+				4D746E284310FDE2816B6EA8 /* Components.swift in Sources */,
+				D754C0753FBB69B8FA52917B /* HomeView.swift in Sources */,
+				6DA595937860F992CC429E86 /* RootView.swift in Sources */,
+				892010E78BC8222FC590C7C5 /* SampleBackend.swift in Sources */,
+				B9FF38E8595920A8CA1C3870 /* SampleConfig.swift in Sources */,
+				4CE6907A7D14072E8D5626C0 /* SampleRouter.swift in Sources */,
+				FCC3B2519C7F804EAD5C05C1 /* SampleSession.swift in Sources */,
+				322FD6E9A39094A6C59AA9B4 /* ShopViews.swift in Sources */,
+				9DFF64B2F4F1518230B62A32 /* SignInView.swift in Sources */,
+				D1D16B7A21B2E46C37ACEB16 /* Theme.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		1531D62D4F089D0A6337D971 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9364E5EC0A865847A4377870 /* BrudcastSample */;
+			targetProxy = 8F03BE7575164ABE09392E83 /* PBXContainerItemProxy */;
+		};
+		BFA4A149A6A27CBF17D1A910 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5D68BDC36D059A1C794F8CC1 /* NotificationService */;
+			targetProxy = 68A545A31E83392B86FCF496 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		13E01F1DE52529388328F317 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "$(SAMPLE_BUNDLE_ID).UITests";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = BrudcastSample;
+			};
+			name = Release;
+		};
+		1DF0FF369A37CFB18A477C1A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = BrudcastSample/BrudcastSample.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = BrudcastSample/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Brudcast Sample";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "$(SAMPLE_BUNDLE_ID)";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		5986C3C0F5634FE63F54A872 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = BrudcastSample/BrudcastSample.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = BrudcastSample/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Brudcast Sample";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "$(SAMPLE_BUNDLE_ID)";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		634B38EB6336D47EBF0A7168 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "$(SAMPLE_BUNDLE_ID).UITests";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = BrudcastSample;
+			};
+			name = Debug;
+		};
+		741DE20D8EED4BB2F4DAA6BA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = NotificationService/NotificationService.entitlements;
+				INFOPLIST_FILE = NotificationService/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = NotificationService;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "$(SAMPLE_BUNDLE_ID).NotificationService";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		A782C03ADDEF226C4D5C96BD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 869E0742CDD2C4817129E166 /* Sample.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		E291655BB97D9FF15D4AFE8C /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 869E0742CDD2C4817129E166 /* Sample.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		FB6D364A41B84145B2F5ED55 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = NotificationService/NotificationService.entitlements;
+				INFOPLIST_FILE = NotificationService/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = NotificationService;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "$(SAMPLE_BUNDLE_ID).NotificationService";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1887720D6FB26B76783BA761 /* Build configuration list for PBXNativeTarget "BrudcastSample" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DF0FF369A37CFB18A477C1A /* Debug */,
+				5986C3C0F5634FE63F54A872 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		34EB297571A82BB68C31D661 /* Build configuration list for PBXNativeTarget "NotificationService" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FB6D364A41B84145B2F5ED55 /* Debug */,
+				741DE20D8EED4BB2F4DAA6BA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		73D1E13312338DF5E0776C8C /* Build configuration list for PBXNativeTarget "BrudcastSampleUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				634B38EB6336D47EBF0A7168 /* Debug */,
+				13E01F1DE52529388328F317 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		9A82133427A666AECFD4F533 /* Build configuration list for PBXProject "BrudcastSample" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A782C03ADDEF226C4D5C96BD /* Debug */,
+				E291655BB97D9FF15D4AFE8C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		43F88357EBC56B7EFB6300C0 /* XCLocalSwiftPackageReference "../.." */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../..;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		1659BAF59B955B0576497279 /* BrudcastNotificationService */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = BrudcastNotificationService;
+		};
+		97B584488B505D0A5B2BC1C1 /* BrudcastInApp */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = BrudcastInApp;
+		};
+		A39F229336556B5D69F1C364 /* Brudcast */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Brudcast;
+		};
+		B2427A1648CEEC2615A1A74E /* BrudcastPush */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = BrudcastPush;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 971E24A0497E94A0327B61B9 /* Project object */;
+}

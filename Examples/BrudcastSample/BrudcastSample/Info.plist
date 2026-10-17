@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>BrudcastPublishableKey</key>
+	<string>$(BRUDCAST_PUBLISHABLE_KEY)</string>
+	<key>BrudcastEnvironment</key>
+	<string>$(BRUDCAST_ENVIRONMENT)</string>
+	<key>BrudcastLocalPort</key>
+	<string>$(BRUDCAST_LOCAL_PORT)</string>
+	<key>BrudcastAppGroup</key>
+	<string>$(BRUDCAST_APP_GROUP)</string>
+	<key>BrudcastSampleBackendURL</key>
+	<string>$(SAMPLE_BACKEND_URL)</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>$(SAMPLE_BUNDLE_ID)</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>brudcast-sample</string>
+			</array>
+		</dict>
+	</array>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Gabarito.ttf</string>
+		<string>HankenGrotesk.ttf</string>
+	</array>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
+</dict>
+</plist>

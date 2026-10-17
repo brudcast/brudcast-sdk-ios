@@ -58,7 +58,7 @@ logs the error and waits for the next `identify`.
 ## Events and screens
 
 ```swift
-Brudcast.track("checkout_started", properties: ["total": 120, "plan": "pro"])
+Brudcast.track("checkout_started", properties: ["total": 120, "product": "sneakers"])
 Brudcast.screen("Checkout")
 ```
 
@@ -152,6 +152,13 @@ environment accepts device tokens, the SDK logs a warning once and keeps the tok
 - Each product ships a privacy manifest. The core's declares the device id, the user id you pass,
   any email address, phone number and name you pass in `BrudcastTraits`, and interactions with
   messages, none of it used for tracking. Your app's App Store privacy answers should match.
+
+## Sample app
+
+`Examples/BrudcastSample` is a small SwiftUI app with a notification service extension that uses
+the SDK the way a customer's app would: sign-in, a shop with checkout, and an account screen. It
+builds against this checkout. See its
+[README](Examples/BrudcastSample/README.md).
 
 ## Develop
 

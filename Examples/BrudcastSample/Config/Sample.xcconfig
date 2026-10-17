@@ -1,0 +1,11 @@
+// Settings for the sample app. Put your own values in Config/Local.xcconfig, which git ignores;
+// copy Config/Local.xcconfig.example to start.
+
+SAMPLE_BUNDLE_ID = com.example.brudcast-sample
+BRUDCAST_PUBLISHABLE_KEY =
+BRUDCAST_ENVIRONMENT = production
+BRUDCAST_LOCAL_PORT = 8191
+BRUDCAST_APP_GROUP = group.$(SAMPLE_BUNDLE_ID)
+SAMPLE_BACKEND_URL =
+
+#include? "Local.xcconfig"
