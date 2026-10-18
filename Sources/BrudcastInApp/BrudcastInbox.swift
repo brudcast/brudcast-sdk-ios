@@ -170,6 +170,21 @@ public final class BrudcastInbox {
         return InboxDetailContainerView(controller: InboxScreen.detail(design: design, messageId: stored.id, inbox: self))
     }
 
+    /// Draws an inbox entry's design with the standard renderer and reports the height it needs, so
+    /// a custom inbox can size the view to fit. The view scrolls when it is given less.
+    ///
+    /// - Parameters:
+    ///   - message: An entry from `list`.
+    ///   - onContentHeightChange: Called on the main queue with the height in points the design
+    ///     needs at the view's width, whenever it changes.
+    /// - Returns: The view, which keeps its renderer alive for as long as it lives, or nil when the
+    ///   design cannot be drawn.
+    public func render(_ message: BrudcastInAppMessage, onContentHeightChange: @escaping (CGFloat) -> Void) -> UIView? {
+        guard let stored = entry(message.id), let design = stored.design else { return nil }
+        let controller = InboxScreen.detail(design: design, messageId: stored.id, inbox: self, onContentHeightChange: onContentHeightChange)
+        return InboxDetailContainerView(controller: controller)
+    }
+
     func open(_ message: BrudcastInAppMessage, from navigation: UINavigationController?) {
         guard let stored = entry(message.id), let design = stored.design else { return }
         markRead(message.id)

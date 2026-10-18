@@ -11,11 +11,11 @@ enum InboxScreen {
         return navigation
     }
 
-    static func detail(design: InAppDesign, messageId: String, inbox: BrudcastInbox) -> UIViewController {
+    static func detail(design: InAppDesign, messageId: String, inbox: BrudcastInbox, onContentHeightChange: ((CGFloat) -> Void)? = nil) -> UIViewController {
         let accent = BrudcastPresentation.keyWindow()?.tintColor ?? .systemBlue
-        let view = InboxDetailView(design: design, theme: InAppTheme(accent: accent)) { [weak inbox] buttonId, action in
+        let view = InboxDetailView(design: design, theme: InAppTheme(accent: accent), onButton: { [weak inbox] buttonId, action in
             inbox?.buttonTapped(messageId: messageId, buttonId: buttonId, action: action)
-        }
+        }, onContentHeightChange: onContentHeightChange)
         let host = UIHostingController(rootView: view)
         host.title = design.title
         return host
@@ -49,15 +49,31 @@ struct InboxDetailView: View {
     let design: InAppDesign
     let theme: InAppTheme
     let onButton: (String?, InAppAction) -> Void
+    var onContentHeightChange: ((CGFloat) -> Void)?
 
     var body: some View {
         GeometryReader { proxy in
             ScrollView {
                 InAppCardView(design: design, theme: theme, width: min(proxy.size.width, 600), onButton: onButton)
                     .frame(width: proxy.size.width)
+                    .background(GeometryReader { content in
+                        Color.clear.preference(key: InboxContentHeightKey.self, value: content.size.height)
+                    })
             }
         }
+        .onPreferenceChange(InboxContentHeightKey.self) { height in
+            onContentHeightChange?(height)
+        }
         .background(InAppBackground(layout: design.layout).edgesIgnoringSafeArea(.all))
+    }
+}
+
+/// The height an inbox entry's design needs at the width it was given.
+struct InboxContentHeightKey: PreferenceKey {
+    static var defaultValue: CGFloat = 0
+
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = max(value, nextValue())
     }
 }
 

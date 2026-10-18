@@ -19,6 +19,11 @@ public enum BrudcastMessageDecision {
 
 public typealias BrudcastMessageHandler = (BrudcastInAppMessage) -> BrudcastMessageDecision
 
+/// Decides what happens to a message about to show, answering later, for handlers that cannot
+/// answer on the spot, such as one in Dart or JavaScript. Called on the main queue. Call the second
+/// argument once, from any queue, within two seconds; after that the message shows.
+public typealias BrudcastAsyncMessageHandler = (BrudcastInAppMessage, @escaping (BrudcastMessageDecision) -> Void) -> Void
+
 /// Why a message closed without an action.
 public enum BrudcastDismissReason: String {
     case closeButton = "close_button"
@@ -64,7 +69,7 @@ public final class BrudcastInApp: BrudcastModule {
     private var paused = false
     private var currentScreen: String?
     private var syncScheduled = false
-    private var messageHandler: BrudcastMessageHandler?
+    private var messageHandler: BrudcastAsyncMessageHandler?
 
     private init() {}
 
@@ -151,6 +156,15 @@ public final class BrudcastInApp: BrudcastModule {
     ///
     /// - Parameter handler: The handler, or nil to show every message.
     public func setMessageHandler(_ handler: BrudcastMessageHandler?) {
+        setAsyncMessageHandler(handler.map { sync in { message, decide in decide(sync(message)) } })
+    }
+
+    /// Sets a handler that answers later, for bridges whose handler replies asynchronously. Call the
+    /// second argument once within two seconds; after that the message shows. Replaces any handler
+    /// set with `setMessageHandler`.
+    ///
+    /// - Parameter handler: The handler, or nil to show every message.
+    public func setAsyncMessageHandler(_ handler: BrudcastAsyncMessageHandler?) {
         DispatchQueue.main.async { self.messageHandler = handler }
     }
 
@@ -309,18 +323,26 @@ public final class BrudcastInApp: BrudcastModule {
         presentingId = message.id
         let publicMessage = message.publicMessage
         DispatchQueue.main.async {
-            let decision = self.messageHandler?(publicMessage) ?? .show
-            self.context?.queue.async {
-                switch decision {
-                case .show:
-                    self.render(message, design: design)
-                case .suppress, .defer:
-                    BrudcastLogger.shared.debug("The host \(decision == .suppress ? "suppressed" : "deferred") message \(message.id)")
-                    self.finishPresenting()
-                case .custom:
-                    self.finishPresenting()
-                }
+            guard let handler = self.messageHandler else {
+                self.context?.queue.async { self.decided(.show, message: message, design: design) }
+                return
             }
+            let decision = BrudcastDecision(fallback: BrudcastMessageDecision.show, timeoutMessage: "The message handler did not answer in time; message \(message.id) shows") { decision in
+                self.context?.queue.async { self.decided(decision, message: message, design: design) }
+            }
+            handler(publicMessage, decision.decide)
+        }
+    }
+
+    private func decided(_ decision: BrudcastMessageDecision, message: InAppMessage, design: InAppDesign) {
+        switch decision {
+        case .show:
+            render(message, design: design)
+        case .suppress, .defer:
+            BrudcastLogger.shared.debug("The host \(decision == .suppress ? "suppressed" : "deferred") message \(message.id)")
+            finishPresenting()
+        case .custom:
+            finishPresenting()
         }
     }
 
