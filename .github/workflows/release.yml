@@ -1,0 +1,48 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  cocoapods:
+    name: Publish to CocoaPods
+    runs-on: macos-15
+    env:
+      COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
+
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v4
+
+      - name: Check the release tag matches the version
+        run: |
+          version="$(sed -n 's/.*version = "\(.*\)".*/\1/p' Sources/Brudcast/Internal/BrudcastSDK.swift)"
+          if [ "$GITHUB_REF_NAME" != "v$version" ]; then
+            echo "::error::The tag $GITHUB_REF_NAME does not match BrudcastSDK.version $version"
+            exit 1
+          fi
+
+      - name: Check the trunk token is set
+        run: |
+          if [ -z "$COCOAPODS_TRUNK_TOKEN" ]; then
+            echo "::error::The COCOAPODS_TRUNK_TOKEN secret is empty. See RELEASING.md."
+            exit 1
+          fi
+
+      - name: Push the pods without dependencies
+        run: |
+          pod trunk push Brudcast.podspec --synchronous
+          pod trunk push BrudcastNotificationService.podspec --synchronous
+
+      - name: Push the pods that depend on them
+        run: |
+          pod trunk push BrudcastInApp.podspec --synchronous
+          pod trunk push BrudcastPush.podspec --synchronous

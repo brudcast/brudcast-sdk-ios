@@ -7,6 +7,12 @@ the public API.
 
 ## [Unreleased]
 
+### Added
+
+- CocoaPods: one pod per module (`Brudcast`, `BrudcastInApp`, `BrudcastPush`,
+  `BrudcastNotificationService`), so imports match Swift Package Manager, with their privacy
+  manifests, a lint job in CI and a release workflow that pushes them to trunk.
+
 ## [0.1.0] - 2026-10-18
 
 ### Added
