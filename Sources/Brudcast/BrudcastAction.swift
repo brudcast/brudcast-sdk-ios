@@ -43,6 +43,11 @@ public enum BrudcastActionResult {
 
 public typealias BrudcastActionHandler = (BrudcastAction) -> BrudcastActionResult
 
+/// Decides what to do with an action, answering later, for handlers that cannot answer on the spot,
+/// such as one in Dart or JavaScript. Called on the main queue. Call the second argument once, from
+/// any queue, within two seconds; after that the default behaviour runs.
+public typealias BrudcastAsyncActionHandler = (BrudcastAction, @escaping (BrudcastActionResult) -> Void) -> Void
+
 enum DefaultActionPerformer {
     static func perform(_ action: BrudcastAction) {
         #if canImport(UIKit)

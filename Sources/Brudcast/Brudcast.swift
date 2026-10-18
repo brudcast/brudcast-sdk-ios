@@ -8,7 +8,7 @@ public enum Brudcast {
     private static let lock = NSLock()
     private static var core: BrudcastCore?
     private static var pending: [(BrudcastCore) -> Void] = []
-    private static var pendingActionHandler: BrudcastActionHandler?
+    private static var pendingActionHandler: BrudcastAsyncActionHandler?
 
     /// Starts the SDK.
     ///
@@ -120,6 +120,15 @@ public enum Brudcast {
     ///
     /// - Parameter handler: The handler, or nil to restore the defaults.
     public static func setActionHandler(_ handler: BrudcastActionHandler?) {
+        setAsyncActionHandler(handler.map { sync in { action, decide in decide(sync(action)) } })
+    }
+
+    /// Sets a handler that answers later, for bridges whose handler replies asynchronously. Call the
+    /// second argument once within two seconds; after that the default behaviour runs. Replaces any
+    /// handler set with `setActionHandler`.
+    ///
+    /// - Parameter handler: The handler, or nil to restore the defaults.
+    public static func setAsyncActionHandler(_ handler: BrudcastAsyncActionHandler?) {
         lock.lock()
         if let core = core {
             lock.unlock()
@@ -128,6 +137,14 @@ public enum Brudcast {
             pendingActionHandler = handler
             lock.unlock()
         }
+    }
+
+    /// Runs the default behaviour for an action, skipping the action handler: opens the link, or does
+    /// nothing for a custom event. For bridges that held an action and later chose the default.
+    ///
+    /// - Parameter action: The action.
+    public static func performDefaultAction(_ action: BrudcastAction) {
+        DispatchQueue.main.async { DefaultActionPerformer.perform(action) }
     }
 
     /// Checks an event name against the rule the service applies.
