@@ -46,7 +46,7 @@ final class BrudcastCore {
     private var flushing = false
     private var flushWaiters: [() -> Void] = []
     private let events: EventQueue
-    var actionHandler: BrudcastActionHandler?
+    var actionHandler: BrudcastAsyncActionHandler?
     private var observers: [NSObjectProtocol] = []
 
     init(publishableKey: String, options: BrudcastOptions, storage: BrudcastStorage, session urlSession: URLSession = .shared) {
@@ -519,10 +519,16 @@ final class BrudcastCore {
 
     func perform(_ action: BrudcastAction) {
         DispatchQueue.main.async {
-            if self.actionHandler?(action) == .handled {
-                return
+            guard let handler = self.actionHandler else { return DefaultActionPerformer.perform(action) }
+            let decision = BrudcastDecision(fallback: BrudcastActionResult.useDefault, timeoutMessage: "The action handler did not answer in time; the default behaviour runs") { result in
+                guard result == .useDefault else { return }
+                if Thread.isMainThread {
+                    DefaultActionPerformer.perform(action)
+                } else {
+                    DispatchQueue.main.async { DefaultActionPerformer.perform(action) }
+                }
             }
-            DefaultActionPerformer.perform(action)
+            handler(action, decision.decide)
         }
     }
 

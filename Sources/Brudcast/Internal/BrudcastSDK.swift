@@ -10,7 +10,24 @@ public enum BrudcastSDK {
         Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
     }
 
+    private static let lock = NSLock()
+    private static var wrapper: String?
+
     static var userAgent: String {
-        "BrudcastSDK-iOS/\(version)"
+        lock.lock()
+        defer { lock.unlock() }
+        return ["BrudcastSDK-iOS/\(version)", wrapper].compactMap { $0 }.joined(separator: " ")
+    }
+
+    /// Names the framework SDK that wraps this one, such as the Flutter plugin, so requests carry it
+    /// in their `User-Agent` for support. Call it before `Brudcast.initialize`.
+    ///
+    /// - Parameters:
+    ///   - name: The wrapper's name, such as `Flutter`.
+    ///   - version: The wrapper's version.
+    public static func setWrapper(name: String, version: String) {
+        lock.lock()
+        wrapper = "BrudcastSDK-\(name)/\(version)"
+        lock.unlock()
     }
 }
