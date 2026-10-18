@@ -5,11 +5,6 @@ on:
     types: [published]
 
   workflow_dispatch:
-    inputs:
-      dry_run:
-        description: Validate the podspecs as trunk would, then stop instead of pushing them
-        type: boolean
-        default: true
 
 permissions:
   contents: read
@@ -24,11 +19,10 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.version.outputs.version }}
-      dry_run: ${{ steps.mode.outputs.dry_run }}
 
     steps:
       - name: Check out the code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Read the version
         id: version
@@ -47,16 +41,10 @@ jobs:
       - name: Check the changelog and README name the same version
         run: scripts/check-version.sh
 
-      - name: Decide between a release and a dry run
-        id: mode
-        env:
-          DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
-        run: echo "dry_run=$DRY_RUN" >> "$GITHUB_OUTPUT"
-
       - name: Check the repository is public before a release
-        if: steps.mode.outputs.dry_run != 'true' && github.event.repository.private
+        if: github.event_name == 'release' && github.event.repository.private
         run: |
-          echo "::error::Make the repository public before releasing. The pods and Swift Package Manager fetch the sources from it, and the cocoapods approval gate needs a public repository on GitHub's free plan."
+          echo "::error::Make the repository public before releasing. Swift Package Manager fetches the sources from it."
           exit 1
 
   test:
@@ -66,7 +54,7 @@ jobs:
 
     steps:
       - name: Check out the code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Run the logic tests
         run: swift test
@@ -81,7 +69,7 @@ jobs:
 
     steps:
       - name: Check out the code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Build an app package that depends on the release tag
         if: github.event_name == 'release'
@@ -106,84 +94,4 @@ jobs:
               echo
               echo "An app package depending on this commit resolved it from GitHub and built all four products for iOS."
             fi
-          } >> "$GITHUB_STEP_SUMMARY"
-
-  validate:
-    name: Validate the podspecs
-    needs: [verify, test]
-    runs-on: macos-15
-
-    steps:
-      - name: Check out the code
-        uses: actions/checkout@v4
-
-      - name: Lint the pods without dependencies
-        run: |
-          pod lib lint Brudcast.podspec --platforms=ios --skip-tests
-          pod lib lint BrudcastNotificationService.podspec --platforms=ios --skip-tests
-
-      - name: Lint the pods that depend on them
-        run: |
-          pod lib lint BrudcastInApp.podspec --platforms=ios --skip-tests --include-podspecs='{Brudcast,BrudcastNotificationService}.podspec'
-          pod lib lint BrudcastPush.podspec --platforms=ios --skip-tests --include-podspecs='{Brudcast,BrudcastNotificationService}.podspec'
-
-      - name: Lint the pods without dependencies against the release tag, as trunk will
-        if: github.event_name == 'release'
-        run: |
-          pod spec lint Brudcast.podspec --platforms=ios --skip-tests
-          pod spec lint BrudcastNotificationService.podspec --platforms=ios --skip-tests
-
-      - name: Summarise the validation
-        env:
-          VERSION: ${{ needs.verify.outputs.version }}
-          DRY_RUN: ${{ needs.verify.outputs.dry_run }}
-        run: |
-          {
-            echo "### Validated the podspecs for $VERSION"
-            echo
-            if [ "$DRY_RUN" = "true" ]; then
-              echo "Dry run: nothing is pushed to trunk."
-            else
-              echo "**Push to CocoaPods** waits for approval in the \`cocoapods\` environment."
-            fi
-          } >> "$GITHUB_STEP_SUMMARY"
-
-  publish:
-    name: Push to CocoaPods
-    needs: [verify, spm, validate]
-    if: needs.verify.outputs.dry_run != 'true'
-    runs-on: macos-15
-    environment: cocoapods
-    env:
-      COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
-
-    steps:
-      - name: Check out the code
-        uses: actions/checkout@v4
-
-      - name: Check the trunk token is set
-        run: |
-          if [ -z "$COCOAPODS_TRUNK_TOKEN" ]; then
-            echo "::error::The COCOAPODS_TRUNK_TOKEN secret is empty. See RELEASING.md."
-            exit 1
-          fi
-
-      - name: Push the pods without dependencies
-        run: |
-          pod trunk push Brudcast.podspec --synchronous
-          pod trunk push BrudcastNotificationService.podspec --synchronous
-
-      - name: Push the pods that depend on them
-        run: |
-          pod trunk push BrudcastInApp.podspec --synchronous
-          pod trunk push BrudcastPush.podspec --synchronous
-
-      - name: Summarise the release
-        env:
-          VERSION: ${{ needs.verify.outputs.version }}
-        run: |
-          {
-            echo "### Pushed $VERSION to CocoaPods"
-            echo
-            echo "It shows on [cocoapods.org](https://cocoapods.org/pods/Brudcast) within a few minutes."
           } >> "$GITHUB_STEP_SUMMARY"

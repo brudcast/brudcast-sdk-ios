@@ -16,7 +16,7 @@ jobs:
 
     steps:
       - name: Check out the code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Check the changelog and README name BrudcastSDK.version
         run: scripts/check-version.sh
@@ -37,21 +37,3 @@ jobs:
 
       - name: Build the sample app
         run: xcodebuild -project Examples/BrudcastSample/BrudcastSample.xcodeproj -scheme BrudcastSample -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build
-
-  podspecs:
-    name: Lint the podspecs
-    runs-on: macos-15
-
-    steps:
-      - name: Check out the code
-        uses: actions/checkout@v4
-
-      - name: Lint the pods without dependencies
-        run: |
-          pod lib lint Brudcast.podspec --platforms=ios --skip-tests
-          pod lib lint BrudcastNotificationService.podspec --platforms=ios --skip-tests
-
-      - name: Lint the pods that depend on them
-        run: |
-          pod lib lint BrudcastInApp.podspec --platforms=ios --skip-tests --include-podspecs='{Brudcast,BrudcastNotificationService}.podspec'
-          pod lib lint BrudcastPush.podspec --platforms=ios --skip-tests --include-podspecs='{Brudcast,BrudcastNotificationService}.podspec'
