@@ -74,6 +74,40 @@ jobs:
       - name: Build for iOS
         run: xcodebuild -scheme Brudcast-Package -destination 'generic/platform=iOS Simulator' build
 
+  spm:
+    name: Build with Swift Package Manager
+    needs: [verify, test]
+    runs-on: macos-15
+
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v4
+
+      - name: Build an app package that depends on the release tag
+        if: github.event_name == 'release'
+        run: scripts/check-spm-consumer.sh --version "${{ needs.verify.outputs.version }}"
+
+      - name: Build an app package that depends on this commit
+        if: github.event_name != 'release'
+        run: scripts/check-spm-consumer.sh --revision "$GITHUB_SHA"
+
+      - name: Summarise the check
+        env:
+          VERSION: ${{ needs.verify.outputs.version }}
+          EVENT: ${{ github.event_name }}
+        run: |
+          {
+            if [ "$EVENT" = "release" ]; then
+              echo "### Swift Package Manager builds $VERSION"
+              echo
+              echo "An app package depending on \`exact: \"$VERSION\"\` resolved it from GitHub and built all four products for iOS."
+            else
+              echo "### Swift Package Manager builds ${GITHUB_SHA:0:7}"
+              echo
+              echo "An app package depending on this commit resolved it from GitHub and built all four products for iOS."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
   validate:
     name: Validate the podspecs
     needs: [verify, test]
@@ -116,7 +150,7 @@ jobs:
 
   publish:
     name: Push to CocoaPods
-    needs: [verify, validate]
+    needs: [verify, spm, validate]
     if: needs.verify.outputs.dry_run != 'true'
     runs-on: macos-15
     environment: cocoapods
