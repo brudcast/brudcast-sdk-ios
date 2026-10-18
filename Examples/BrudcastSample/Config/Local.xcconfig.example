@@ -1,0 +1,20 @@
+// Copy to Local.xcconfig and fill in. Local.xcconfig is ignored by git.
+
+// The publishable key (bpk_...) of an in-app application in the Brudcast dashboard.
+BRUDCAST_PUBLISHABLE_KEY = bpk_replace_me
+
+// production, staging, uat, development or local.
+BRUDCAST_ENVIRONMENT = production
+
+// Port of brudcast-in-app-delivery-service when BRUDCAST_ENVIRONMENT is local.
+BRUDCAST_LOCAL_PORT = 8191
+
+// Your backend to sign in through (see the README). Leave empty to paste user
+// hashes by hand. `//` starts a comment in an xcconfig, so write the URL with `$()` between the
+// slashes.
+SAMPLE_BACKEND_URL = http:/$()/localhost:4000
+
+// Needed to run on a device: your Apple team and a bundle id it can sign. The App Group is
+// derived from the bundle id; register it for your team.
+DEVELOPMENT_TEAM =
+SAMPLE_BUNDLE_ID = com.example.brudcast-sample

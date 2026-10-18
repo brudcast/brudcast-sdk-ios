@@ -14,3 +14,12 @@ jobs:
         run: swift test
       - name: Build for iOS
         run: xcodebuild -scheme Brudcast-Package -destination 'generic/platform=iOS Simulator' build
+      - name: Check the sample project matches project.yml
+        working-directory: Examples/BrudcastSample
+        run: |
+          curl -sSfL https://github.com/yonaskolb/XcodeGen/releases/download/2.46.0/xcodegen.zip -o "$RUNNER_TEMP/xcodegen.zip"
+          unzip -q "$RUNNER_TEMP/xcodegen.zip" -d "$RUNNER_TEMP"
+          "$RUNNER_TEMP/xcodegen/bin/xcodegen" generate
+          git diff --exit-code -- . || (echo "Run xcodegen generate in Examples/BrudcastSample and commit the result" && exit 1)
+      - name: Build the sample app
+        run: xcodebuild -project Examples/BrudcastSample/BrudcastSample.xcodeproj -scheme BrudcastSample -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build

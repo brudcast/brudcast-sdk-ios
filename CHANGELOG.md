@@ -21,6 +21,8 @@ the public API.
   deliveries for the app to send.
 - A privacy manifest in every product.
 - Apache License 2.0, a security policy and this changelog.
+- A sample app with a notification service extension in `Examples/BrudcastSample` that uses the
+  SDK the way a customer's app would, from sign-in through a shop to sign-out, built in CI.
 
 ### Security
 

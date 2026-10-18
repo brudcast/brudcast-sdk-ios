@@ -50,6 +50,9 @@ final class InAppPresentationModel: ObservableObject {
 }
 
 struct InAppModalView: View {
+    /// How far a dismissible modal's content starts from the top: the close button and its inset.
+    private static let closeButtonClearance: CGFloat = 48
+
     @ObservedObject var model: InAppPresentationModel
     let containerSize: CGSize
     let safeInsets: EdgeInsets
@@ -76,7 +79,9 @@ struct InAppModalView: View {
                         theme: model.theme,
                         onButton: model.onButton
                     )
-                    .padding(padding)
+                    .padding(.horizontal, padding)
+                    .padding(.bottom, padding)
+                    .padding(.top, layout.dismissible ? max(padding, Self.closeButtonClearance) : padding)
                 }
                 if layout.dismissible {
                     InAppCloseButton { model.onDismiss(.closeButton) }
