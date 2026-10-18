@@ -21,12 +21,17 @@ public struct BrudcastAction: Equatable {
     public let value: String
     public let opensInApp: Bool
     public let source: Source
+    /// False when the action came from input another app could forge. Every action the SDK creates
+    /// today comes from the app's own UI or from the system notification center, so it is true.
+    /// Matches `BrudcastAction.verified` on Android, where a push tap can be forged.
+    public let verified: Bool
 
-    public init(kind: Kind, value: String, opensInApp: Bool = false, source: Source) {
+    public init(kind: Kind, value: String, opensInApp: Bool = false, source: Source, verified: Bool = true) {
         self.kind = kind
         self.value = value
         self.opensInApp = opensInApp
         self.source = source
+        self.verified = verified
     }
 }
 
