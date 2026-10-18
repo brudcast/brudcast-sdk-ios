@@ -1,5 +1,7 @@
 # Brudcast iOS SDK
 
+![Brudcast: Reach Everyone, Every time](.github/assets/banner.svg)
+
 In-app messaging and push notifications for iOS apps on Brudcast. iOS 14 and later, Swift Package
 Manager.
 
