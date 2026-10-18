@@ -7,11 +7,11 @@ the public API.
 
 ## [Unreleased]
 
-### Added
+### Removed
 
-- Available on CocoaPods as one pod per module (`Brudcast`, `BrudcastInApp`, `BrudcastPush`,
-  `BrudcastNotificationService`), each with its privacy manifest, so imports are the same as with
-  Swift Package Manager.
+- CocoaPods. 0.1.0 is published there as one pod per module (`Brudcast`, `BrudcastInApp`,
+  `BrudcastPush`, `BrudcastNotificationService`) and is the last version there, because CocoaPods
+  trunk is becoming read-only. Later versions are Swift Package Manager only.
 
 ## [0.1.0] - 2026-10-18
 
