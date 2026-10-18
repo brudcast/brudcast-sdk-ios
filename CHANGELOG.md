@@ -7,6 +7,22 @@ the public API.
 
 ## [Unreleased]
 
+### Added
+
+- Handlers that answer later, for bridges such as the Flutter plugin whose handlers reply
+  asynchronously: `Brudcast.setAsyncActionHandler`, `BrudcastInApp.setAsyncMessageHandler` and
+  `BrudcastPush.setAsyncNotificationHandler`. Each waits two seconds, then uses the default. The
+  synchronous setters now wrap them.
+- `BrudcastPush.presentationOptions(for:completionHandler:)`, which waits for an asynchronous
+  notification handler. The notification delegate installed by `installNotificationDelegate` uses
+  it.
+- `Brudcast.performDefaultAction`, which runs an action's default behaviour without the handler.
+- `BrudcastInbox.render(_:onContentHeightChange:)`, which reports the height an entry's design
+  needs, so a custom inbox can size the view to fit.
+- `BrudcastDecision`, the one-answer-with-timeout helper the asynchronous handlers use, for modules.
+- `BrudcastSDK.setWrapper(name:version:)`, which adds a wrapping SDK such as the Flutter plugin to
+  the `User-Agent`.
+
 ## [0.1.1] - 2026-10-18
 
 ### Added
