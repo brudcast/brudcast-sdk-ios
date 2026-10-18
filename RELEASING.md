@@ -15,14 +15,16 @@ pods, the tag and the SDK can never name different versions.
 ## The stages
 
 ```
-Verify ─▶ Test ─▶ Validate the podspecs ─▶ Push to CocoaPods
-                                            (waits for approval)
+                  ┌─▶ Build with Swift Package Manager ─┐
+Verify ─▶ Test ───┤                                      ├─▶ Push to CocoaPods
+                  └─▶ Validate the podspecs ────────────┘    (waits for approval)
 ```
 
 | Stage | What it does | Secrets |
 | --- | --- | --- |
 | Verify | Reads `BrudcastSDK.version`, checks a release's tag is `v<version>` and that `CHANGELOG.md` and the README name the same version, and refuses a release while the repository is private | none |
 | Test | The logic tests and the iOS build | none |
+| Build with Swift Package Manager | `scripts/check-spm-consumer.sh`: builds a scratch app package that depends on the SDK from GitHub, with all four products, for iOS. On a release it depends on `exact: "<version>"`, so it proves Swift Package Manager can resolve and build the tag customers will get; on a dry run it depends on the commit being run | none |
 | Validate the podspecs | `pod lib lint` on all four pods; on a release, also `pod spec lint` on `Brudcast` and `BrudcastNotificationService` against the tag, as trunk will. The pods that depend on them are validated by trunk when they are pushed, once their dependencies are there | none |
 | Push to CocoaPods | After approval in the `cocoapods` environment, checks the trunk token is set and pushes the four pods, dependencies first | the trunk token |
 
@@ -58,8 +60,20 @@ A version on trunk cannot be overwritten. A mistake needs a new version, or
 ## Dry run
 
 Run the **Release** workflow by hand from the Actions tab with **dry run** ticked, which is the
-default. It verifies, tests and lints the four pods, then stops before **Push to CocoaPods**.
+default. It verifies, tests, builds the current commit with Swift Package Manager and lints the four
+pods, then stops before **Push to CocoaPods**.
 Nothing is pushed.
+
+## Check Swift Package Manager locally
+
+```sh
+scripts/check-spm-consumer.sh --version 0.1.0
+scripts/check-spm-consumer.sh --revision "$(git rev-parse HEAD)"
+```
+
+Swift Package Manager has no registry to publish to: apps fetch the package from the tag, so the tag
+is the release. This check builds what they would get. A commit has to be pushed to GitHub before
+`--revision` can find it.
 
 ## Check the podspecs locally
 
