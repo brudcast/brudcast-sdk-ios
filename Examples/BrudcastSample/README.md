@@ -37,6 +37,9 @@ The backend needs two endpoints, both taking and returning JSON:
 
 On an error, the app shows the response's `message`.
 
+[brudcast-sample-backend](https://github.com/brudcast/brudcast-sample-backend) implements both in a
+few short TypeScript files; run it locally to try the flow.
+
 `CustomerFlowUITests` drives the whole app on a simulator: sign in, receive the welcome message and
 tap its button, shop through to a placed order, find the action in the activity log, sign out. It
 needs the stack and the backend running, so it is skipped unless the test runner gets
