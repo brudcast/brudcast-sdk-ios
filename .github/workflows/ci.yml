@@ -18,6 +18,9 @@ jobs:
       - name: Check out the code
         uses: actions/checkout@v4
 
+      - name: Check the changelog and README name BrudcastSDK.version
+        run: scripts/check-version.sh
+
       - name: Run the logic tests
         run: swift test
 
