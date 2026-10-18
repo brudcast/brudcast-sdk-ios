@@ -2,7 +2,7 @@ import Foundation
 
 /// Facts about this build of the SDK.
 public enum BrudcastSDK {
-    public static let version = "0.1.1"
+    public static let version = "0.2.0"
 
     public static let platform = "ios"
 
