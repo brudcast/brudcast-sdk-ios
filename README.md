@@ -15,7 +15,11 @@ A push-only app links `Brudcast` and `BrudcastPush` and never ships the renderer
 ## Install
 
 Add `https://github.com/brudcast/brudcast-sdk-ios` in Xcode (File > Add Package Dependencies) and pick
-the products you need.
+the products you need. In a `Package.swift`:
+
+```swift
+.package(url: "https://github.com/brudcast/brudcast-sdk-ios", from: "0.1.0")
+```
 
 ## Start
 

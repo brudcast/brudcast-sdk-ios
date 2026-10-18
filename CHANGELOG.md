@@ -7,6 +7,8 @@ the public API.
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-10-18
+
 ### Added
 
 - `Brudcast` core: configuration, a Keychain device id, sessions, `identify` and `reset` with
@@ -50,3 +52,6 @@ the public API.
 - The notification service extension skips images over Apple's 10 MB attachment limit.
 - The event queue is written to disk at most once a second, and when the app goes to the
   background, instead of on every event.
+
+[Unreleased]: https://github.com/brudcast/brudcast-sdk-ios/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/brudcast/brudcast-sdk-ios/releases/tag/v0.1.0
