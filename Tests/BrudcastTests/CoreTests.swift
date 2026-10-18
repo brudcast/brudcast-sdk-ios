@@ -133,6 +133,11 @@ final class CoreTests: XCTestCase {
         XCTAssertEqual(traits["email"] as? String, "a@b.co")
     }
 
+    func testActionsAreVerifiedUnlessMarkedOtherwise() {
+        XCTAssertTrue(BrudcastAction(kind: .deeplink, value: "shop://cart", source: .push(messageId: "m1")).verified)
+        XCTAssertFalse(BrudcastAction(kind: .deeplink, value: "shop://cart", source: .push(messageId: "m1"), verified: false).verified)
+    }
+
     func testEnvironmentsPointAtTheSdkApi() {
         XCTAssertEqual(BrudcastEnvironment.production.baseURL.absoluteString, "https://in-app-delivery-service.brudcast.com/sdk/v1")
         XCTAssertEqual(BrudcastEnvironment.local(port: 8191).baseURL.absoluteString, "http://localhost:8191/sdk/v1")
