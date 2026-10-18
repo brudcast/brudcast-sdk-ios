@@ -7,6 +7,13 @@ the public API.
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-10-18
+
+### Added
+
+- `BrudcastAction.verified`, matching the Android SDK. Every action the iOS SDK creates comes from
+  the app's own UI or from the system notification center, so it is always true.
+
 ### Removed
 
 - CocoaPods. 0.1.0 is published there as one pod per module (`Brudcast`, `BrudcastInApp`,
@@ -59,5 +66,6 @@ the public API.
 - The event queue is written to disk at most once a second, and when the app goes to the
   background, instead of on every event.
 
-[Unreleased]: https://github.com/brudcast/brudcast-sdk-ios/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/brudcast/brudcast-sdk-ios/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/brudcast/brudcast-sdk-ios/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/brudcast/brudcast-sdk-ios/releases/tag/v0.1.0

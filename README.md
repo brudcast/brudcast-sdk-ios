@@ -18,7 +18,7 @@ Add `https://github.com/brudcast/brudcast-sdk-ios` in Xcode (File > Add Package 
 the products you need. In a `Package.swift`:
 
 ```swift
-.package(url: "https://github.com/brudcast/brudcast-sdk-ios", from: "0.1.0")
+.package(url: "https://github.com/brudcast/brudcast-sdk-ios", from: "0.1.1")
 ```
 
 0.1.0 is also on CocoaPods, as the pods `Brudcast`, `BrudcastInApp`, `BrudcastPush` and
