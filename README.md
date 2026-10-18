@@ -21,6 +21,17 @@ the products you need. In a `Package.swift`:
 .package(url: "https://github.com/brudcast/brudcast-sdk-ios", from: "0.1.0")
 ```
 
+With CocoaPods, add the pods for the modules you use to your `Podfile`:
+
+```ruby
+pod 'Brudcast'
+pod 'BrudcastInApp'
+pod 'BrudcastPush'
+pod 'BrudcastNotificationService' # in the notification service extension's target
+```
+
+[RELEASING.md](RELEASING.md) covers publishing both.
+
 ## Start
 
 ```swift
