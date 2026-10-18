@@ -9,9 +9,9 @@ the public API.
 
 ### Added
 
-- CocoaPods: one pod per module (`Brudcast`, `BrudcastInApp`, `BrudcastPush`,
-  `BrudcastNotificationService`), so imports match Swift Package Manager, with their privacy
-  manifests, a lint job in CI and a release workflow that pushes them to trunk.
+- Available on CocoaPods as one pod per module (`Brudcast`, `BrudcastInApp`, `BrudcastPush`,
+  `BrudcastNotificationService`), each with its privacy manifest, so imports are the same as with
+  Swift Package Manager.
 
 ## [0.1.0] - 2026-10-18
 
