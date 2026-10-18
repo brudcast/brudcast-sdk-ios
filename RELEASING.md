@@ -21,7 +21,7 @@ Verify ─▶ Test ─▶ Validate the podspecs ─▶ Push to CocoaPods
 
 | Stage | What it does | Secrets |
 | --- | --- | --- |
-| Verify | Reads `BrudcastSDK.version`, checks a release's tag is `v<version>`, and refuses a release while the repository is private | none |
+| Verify | Reads `BrudcastSDK.version`, checks a release's tag is `v<version>` and that `CHANGELOG.md` and the README name the same version, and refuses a release while the repository is private | none |
 | Test | The logic tests and the iOS build | none |
 | Validate the podspecs | `pod lib lint` on all four pods; on a release, also `pod spec lint` on `Brudcast` and `BrudcastNotificationService` against the tag, as trunk will. The pods that depend on them are validated by trunk when they are pushed, once their dependencies are there | none |
 | Push to CocoaPods | After approval in the `cocoapods` environment, checks the trunk token is set and pushes the four pods, dependencies first | the trunk token |
@@ -31,8 +31,11 @@ CocoaPods**. A failed stage can be re-run on its own from the run page.
 
 ## Release
 
-1. Set `BrudcastSDK.version` to the new version, move the `Unreleased` section of `CHANGELOG.md`
-   under that version with today's date, and merge to `main`.
+1. On a `docs/release-<version>` branch, set `BrudcastSDK.version` to the new version, move the
+   `Unreleased` section of `CHANGELOG.md` under that version with today's date, and set the
+   version in the README's `Package.swift` line to it. Commit as `docs: release <version>` and
+   merge to `main`. CI runs `scripts/check-version.sh`, which fails until all three name the same
+   version.
 2. Create a GitHub release from `main` with the tag `v<version>`, such as `v0.2.0`, and the
    changelog section as its notes. Swift Package Manager can resolve it at once.
 3. The run stops at **Push to CocoaPods** and waits for a reviewer. Open the run, check the
@@ -44,6 +47,13 @@ CocoaPods**. A failed stage can be re-run on its own from the run page.
 
 A version on trunk cannot be overwritten. A mistake needs a new version, or
 `pod trunk deprecate` while the fix ships.
+
+## Conventions
+
+- Commits follow [Conventional Commits](https://www.conventionalcommits.org). A change that breaks
+  the public API gets a `!` after its type, such as `fix!:`, before 1.0 too.
+- `CHANGELOG.md` lists what an app using the SDK gets. How the SDK is built, tested and released
+  belongs in the pull request and in this file, not in the changelog.
 
 ## Dry run
 
